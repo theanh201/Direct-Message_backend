@@ -3,13 +3,18 @@ package main
 import (
 	"DirectBackend/api"
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
+
+var Direct_Backend_DB string = "user:password1234@tcp(127.0.0.1:3306)/Direct_Backend_DB"
 
 // Hardcoded user credentials for demonstration purposes
 var UserAccount = map[string]string{
@@ -25,6 +30,20 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8090", router))
 }
 
+func writeUserToDB(username string, password string) int {
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		panic(err)
+	}
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(username, password)
+	_, err = db.Query("INSERT INTO user VALUES(1,'sam')")
+	defer db.Close()
+	return 0
+}
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	var creds api.User
 	err := json.NewDecoder(r.Body).Decode(&creds)
