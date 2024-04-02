@@ -2,9 +2,11 @@ package main
 
 import (
 	"DirectBackend/api"
+	"DirectBackend/db"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -19,7 +21,9 @@ var UserAccount = map[string]string{
 var UserTokens = map[string]api.Token{}
 
 func main() {
-	writeUserToDB("user3", "password3")
+	// db.WriteUserToDB("user3", "password3")
+	password, err := db.ReadUserFromDB("user3")
+	fmt.Println(password, err)
 	router := mux.NewRouter()
 	router.HandleFunc("/login", loginHandler).Methods("POST")
 	router.HandleFunc("/register", registerHandler).Methods("POST")
