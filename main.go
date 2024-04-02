@@ -2,9 +2,10 @@ package main
 
 import (
 	"DirectBackend/api"
-	"crypto/rand"
-	"encoding/hex"
-	"encoding/json"
+	_ "DirectBackend/api"
+	"DirectBackend/apiHandler"
+	_ "DirectBackend/apiHandler"
+	_ "DirectBackend/db"
 	"log"
 	"net/http"
 
@@ -20,64 +21,10 @@ var UserTokens = map[string]api.Token{}
 
 func main() {
 	// db.WriteUserToDB("user3", "password3")
-	// password, err := db.ReadUserFromDB("user3")
+	// password, err := db.ReadUserPasswordFromDB("user3")
 	// fmt.Println(password, err)
 	router := mux.NewRouter()
-	router.HandleFunc("/login", loginHandler).Methods("POST")
-	router.HandleFunc("/register", registerHandler).Methods("POST")
+	router.HandleFunc("/login", apiHandler.LoginHandler).Methods("POST")
+	// router.HandleFunc("/register", apiHandler.RegisterHandler).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8090", router))
-}
-
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	var creds api.User
-	err := json.NewDecoder(r.Body).Decode(&creds)
-	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
-	password, exist := UserAccount[creds.Username]
-	if !exist || password != creds.Password {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
-		return
-	}
-
-	token := generateSecureRandomString(64)
-	tokens, exist := UserTokens[creds.Username]
-
-	if !exist {
-		UserTokens[creds.Username] = api.Token{
-			Tokens:        []string{token},
-			TokensTimeOut: []int{30},
-		}
-	} else {
-		UserTokens[creds.Username] = api.Token{
-			Tokens:        append(tokens.Tokens, token),
-			TokensTimeOut: append(tokens.TokensTimeOut, 30),
-		}
-	}
-	response := map[string]string{"message": "Login successful", "token": token, "timeout": "30"}
-	json.NewEncoder(w).Encode(response)
-}
-
-func registerHandler(w http.ResponseWriter, r *http.Request) {
-	var creds api.User
-	err := json.NewDecoder(r.Body).Decode(&creds)
-	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
-	_, exist := UserAccount[creds.Username]
-	if exist {
-		http.Error(w, "Username already exsist", http.StatusUnauthorized)
-		return
-	}
-	UserAccount[creds.Username] = creds.Password
-	response := map[string]string{"message": "Create sucess"}
-	json.NewEncoder(w).Encode(response)
-}
-
-func generateSecureRandomString(length int) string {
-	bytes := make([]byte, length)
-	rand.Read(bytes)
-	return hex.EncodeToString(bytes)
 }

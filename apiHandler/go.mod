@@ -1,18 +1,14 @@
-module main
+module apiHandler
 
 go 1.21.8
 
-replace DirectBackend/api => ./api
+replace DirectBackend/api => .././api
 
-replace DirectBackend/apiHandler => ./apiHandler
-
-replace DirectBackend/db => ./db
+replace DirectBackend/db => .././db
 
 require (
 	DirectBackend/api v0.0.0-00010101000000-000000000000
-	DirectBackend/apiHandler v0.0.0-00010101000000-000000000000
 	DirectBackend/db v0.0.0-00010101000000-000000000000
-	github.com/gorilla/mux v1.8.1
 )
 
 require (
