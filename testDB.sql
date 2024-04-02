@@ -12,3 +12,36 @@ INSERT INTO USER_ACCOUNT (USER_ACCOUNT_USERNAME, USER_ACCOUNT_PASSWORD)
 VALUES 
 ('user1', 'password1'),
 ('user2', 'password2');
+ SELECT * FROM USER_ACCOUNT; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
