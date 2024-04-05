@@ -30,7 +30,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(now.Format(""))
 	var timeout string = "2024-4-2  00:00:00"
 	err = db.WriteUserTokenToDB(id, token, timeout)
-	if err == nil {
+	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusUnauthorized)
 	}
 
