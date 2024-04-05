@@ -1,20 +1,12 @@
 package main
 
 import (
-	"DirectBackend/api"
 	"DirectBackend/apiHandler"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
-
-// Hardcoded user credentials for demonstration purposes
-var UserAccount = map[string]string{
-	"user1": "password1",
-	"user2": "password2",
-}
-var UserTokens = map[string]api.Token{}
 
 func main() {
 	// db.WriteUserToDB("user3", "password3")
