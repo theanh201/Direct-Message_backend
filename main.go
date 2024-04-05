@@ -2,10 +2,7 @@ package main
 
 import (
 	"DirectBackend/api"
-	_ "DirectBackend/api"
 	"DirectBackend/apiHandler"
-	_ "DirectBackend/apiHandler"
-	_ "DirectBackend/db"
 	"log"
 	"net/http"
 
@@ -25,6 +22,6 @@ func main() {
 	// fmt.Println(password, err)
 	router := mux.NewRouter()
 	router.HandleFunc("/login", apiHandler.LoginHandler).Methods("POST")
-	// router.HandleFunc("/register", apiHandler.RegisterHandler).Methods("POST")
+	router.HandleFunc("/register", apiHandler.RegisterHandler).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8090", router))
 }

@@ -2,9 +2,7 @@ package apiHandler
 
 import (
 	"DirectBackend/api"
-	_ "DirectBackend/api"
 	"DirectBackend/db"
-	_ "DirectBackend/db"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -22,7 +20,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	password, id, err := db.ReadUserPasswordFromDB(creds.Username)
 	if err != nil || password != creds.Password {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		response := map[string]string{"message": "Invalid username or password"}
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 
@@ -39,22 +38,23 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-// 	var creds api.User
-// 	err := json.NewDecoder(r.Body).Decode(&creds)
-// 	if err != nil {
-// 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-// 		return
-// 	}
-// 	_, exist := UserAccount[creds.Username]
-// 	if exist {
-// 		http.Error(w, "Username already exsist", http.StatusUnauthorized)
-// 		return
-// 	}
-// 	UserAccount[creds.Username] = creds.Password
-// 	response := map[string]string{"message": "Create sucess"}
-// 	json.NewEncoder(w).Encode(response)
-// }
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	var creds api.User
+	err := json.NewDecoder(r.Body).Decode(&creds)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	_, _, err = db.ReadUserPasswordFromDB(creds.Username)
+	if err == nil {
+		response := map[string]string{"message": "Username already exsist"}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	db.WriteUserToDB(creds.Username, creds.Password)
+	response := map[string]string{"message": "Create sucessful"}
+	json.NewEncoder(w).Encode(response)
+}
 
 func generateSecureRandomString(length int) string {
 	bytes := make([]byte, length)
