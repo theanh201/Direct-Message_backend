@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
+	// "time"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -20,15 +20,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	password, id, err := model.ReadUserPasswordFromDB(creds.Username)
-	if err != nil || password != creds.Password {
+	if err != nil{
+		http.Error(w, fmt.Sprint(err), http.StatusUnauthorized)
+		return
+	}else if password != creds.Password {
 		response := map[string]string{"message": "Invalid username or password"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	token := generateSecureRandomString(32)
-	now := time.Now()
-	fmt.Println(now.Format(""))
 	var timeout string = "2024-4-2  00:00:00"
 	err = model.WriteUserTokenToDB(id, token, timeout)
 	if err != nil {
@@ -47,9 +48,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, _, err = model.ReadUserPasswordFromDB(creds.Username)
-	if err == nil {
-		response := map[string]string{"message": "Username already exsist"}
+	_, id, _ := model.ReadUserPasswordFromDB(creds.Username)
+	if id != -1 {
+		response := map[string]string{"message": " already exsist"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
