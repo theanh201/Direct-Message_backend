@@ -2,15 +2,16 @@ module main
 
 go 1.21.8
 
-replace DirectBackend/api => ./api
+replace DirectBackend/model => ./model
 
-replace DirectBackend/apiHandler => ./apiHandler
+replace DirectBackend/controller => ./controller
 
-replace DirectBackend/db => ./db
+replace DirectBackend/entities => ./entities
 
 require (
-	DirectBackend/api v0.0.0-00010101000000-000000000000
-	DirectBackend/apiHandler v0.0.0-00010101000000-000000000000
+	DirectBackend/model v0.0.0-00010101000000-000000000000
+	DirectBackend/controller v0.0.0-00010101000000-000000000000
+	DirectBackend/entities v0.0.0-00010101000000-000000000000
 	github.com/gorilla/mux v1.8.1
 )
 

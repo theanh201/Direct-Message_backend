@@ -1,8 +1,8 @@
-module db
+module model
 
 go 1.21.8
 
-replace DirectBackend/api => .././api
+replace DirectBackend/entities => .././entities
 
 require github.com/go-sql-driver/mysql v1.8.1
 
