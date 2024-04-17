@@ -57,3 +57,4 @@ func ReadUserPasswordFromDB(username string) (string, int, error) {
 	defer db.Close()
 	return dbPassword, dbID, err
 }
+

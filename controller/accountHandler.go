@@ -12,7 +12,7 @@ import (
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	var creds entities.User
+	var creds entities.Account
 	var err error = json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
@@ -41,7 +41,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	var creds entities.User
+	var creds entities.Account
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)

@@ -1,7 +1,7 @@
 package entities
 
 // User represents a user in the system
-type User struct {
+type Account struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
