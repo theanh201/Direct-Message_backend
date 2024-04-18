@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -9,98 +10,153 @@ import (
 
 var Direct_Backend_DB string = "user:password1234@tcp(127.0.0.1:3306)/Direct_Backend_DB"
 
-func AccModelWriteUser(username string, password string) error {
+func AccWriteUser(username string, password string) error {
+	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
 		return err
 	}
-
 	err = db.Ping()
 	if err != nil {
 		return err
 	}
-
-	qr := "INSERT INTO USER (USER_EMAIL, USER_PASSWORD, USER_IS_PRIVATE, USER_IS_DEL) VALUES('" + username + "','" + password + "', 0, 0)"
+	// Add username and password to DB
+	qr := "INSERT INTO USER (USER_EMAIL, USER_PASSWORD, USER_IS_PRIVATE, USER_IS_DEL) VALUES('" + username + "',x'" + password + "', 0, 0)"
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
-
+	// Close
 	defer db.Close()
 	return err
 }
 
 // return Password, Id, Error
-func AccModelReadUserPassword(username string) (string, int, error) {
+func AccReadUserPassword(username string) (password string, id int, err error) {
+	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
 		return "", -1, err
 	}
-
 	err = db.Ping()
 	if err != nil {
 		return "", -1, err
 	}
-
+	// Read Password and ID
 	qr := "SELECT USER_PASSWORD, USER_ID FROM USER WHERE USER_EMAIL LIKE '" + username + "';"
 	rows, err := db.Query(qr)
 	if err != nil {
 		return "", -1, err
 	}
-
-	var dbPassword string
-	var dbID int
+	var dbPassword []byte
 	rows.Next()
-	if err := rows.Scan(&dbPassword, &dbID); err != nil {
+	if err := rows.Scan(&dbPassword, &id); err != nil {
 		return "", -1, err
 	}
+	password = hex.EncodeToString(dbPassword)
+	// Close
 	defer db.Close()
-	return dbPassword, dbID, err
+	return password, id, err
 }
 
-func AccModelUpdateEmail(id int, email string) (err error) {
+func AccUpdateEmail(id int, email string) (err error) {
+	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
 		return err
 	}
-
 	err = db.Ping()
 	if err != nil {
 		return err
 	}
-
+	// Update Email
 	qr := fmt.Sprintf("UPDATE USER SET USER_EMAIL='%s' WHERE USER_ID=%d;", email, id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
+	// Revoke token
 	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d;", id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
+	// Close
+	defer db.Close()
 	return err
 }
 
-func AccModelUpdatePhoneNumb(id int, phoneNumb string) (err error) {
+func AccUpdatePhoneNumb(id int, phoneNumb string) (err error) {
+	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
 		return err
 	}
-
 	err = db.Ping()
 	if err != nil {
 		return err
 	}
+	// Update phone number
 	qr := fmt.Sprintf("UPDATE USER SET USER_PHONE_NUMB='%s' WHERE USER_ID=%d;", phoneNumb, id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
+	// Revoke token
 	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d;", id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
+	// Close
+	defer db.Close()
+	return err
+}
+
+func AccUpdatePassword(id int, password string) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	// Update password
+	qr := fmt.Sprintf("UPDATE USER SET USER_PASSWORD=x'%s' WHERE USER_ID=%d;", password, id)
+	_, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	// Revoke token
+	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d;", id)
+	_, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	// Close
+	defer db.Close()
+	return err
+}
+
+func AccUpdateName(id int, name string) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	// Update name
+	qr := fmt.Sprintf("UPDATE USER SET USER_NAME='%s' WHERE USER_ID=%d;", name, id)
+	_, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	// Close
+	defer db.Close()
 	return err
 }
