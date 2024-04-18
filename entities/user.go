@@ -5,4 +5,6 @@ type UserInfo struct {
 	UserPhoneNumber string
 	UserName        string
 	UserAvatar      string
+	UserBackground  string
+	UserIsPrivate   bool
 }
