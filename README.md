@@ -13,13 +13,13 @@ http://localhost:8080/login
 // Update avatar
 curl -X PUT \
 -F 'avatar=@/home/user/MEGA/Pictures/Wallpapers/windowChan.jpg' \
--F 'token=61ce5c6547de8b32b2c8895836be19b0a06993076234a13c2f3a4ef5d773b1ed' \
+-F 'token=c26182220bc8e58097782baee9c805765e04d331140749ee483bf6cac7134c5a' \
 localhost:8080/update-avatar
 
 // Update background
 curl -X PUT \
 -F 'background=@/home/user/MEGA/Pictures/Wallpapers/windowChan.jpg' \
--F 'token=61ce5c6547de8b32b2c8895836be19b0a06993076234a13c2f3a4ef5d773b1ed' \
+-F 'token=c26182220bc8e58097782baee9c805765e04d331140749ee483bf6cac7134c5a' \
 localhost:8080/update-background
 
 // Update email this will mark all current token as deleted
@@ -45,4 +45,9 @@ curl -X PUT \
 -F 'name=the anh' \
 -F 'token=61ce5c6547de8b32b2c8895836be19b0a06993076234a13c2f3a4ef5d773b1ed' \
 localhost:8080/update-name
+
+// Get self info
+curl -X GET \
+-F 'token=ed2bd7be97182347b79f328591ba59937738e53245e0f676bc13d3688ddcea72' \
+localhost:8080/get-self-info
 ```

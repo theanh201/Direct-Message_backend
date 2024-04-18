@@ -10,3 +10,12 @@ type Token struct {
 	Tokens        []string
 	TokensTimeOut []int
 }
+
+type AccountInfo struct {
+	UserEmail       string
+	UserPhoneNumber string
+	UserName        string
+	UserAvatar      string
+	UserBackground  string
+	UserIsPrivate   bool
+}

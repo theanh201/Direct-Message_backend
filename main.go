@@ -12,7 +12,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/login", controller.AccLogin).Methods("POST")
 	router.HandleFunc("/register", controller.AccRegister).Methods("POST")
-
+	router.HandleFunc("/get-self-info", controller.AccGetSelfInfo).Methods("GET")
 	// router.HandleFunc("/get-info", controller.SearchControllerGetUsername).Methods("POST")
 	router.HandleFunc("/update-avatar", controller.AccUpdateAvatar).Methods("PUT")
 	router.HandleFunc("/update-background", controller.AccUpdateBackground).Methods("PUT")
@@ -22,7 +22,7 @@ func main() {
 	router.HandleFunc("/update-name", controller.AccUpdateName).Methods("PUT")
 
 	// router.HandleFunc("/test", test)
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8090", router))
 }
 func test(w http.ResponseWriter, r *http.Request) {
 	// http.ServeFile(w, r, "./asset/test.txt")
