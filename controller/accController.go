@@ -8,10 +8,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	// "time"
+	"time"
 )
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+func AccControllerLogin(w http.ResponseWriter, r *http.Request) {
 	var creds entities.Account
 	var err error = json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
@@ -20,18 +20,19 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	password, id, err := model.ReadUserPasswordFromDB(creds.Username)
-	if err != nil{
+	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusUnauthorized)
 		return
-	}else if password != creds.Password {
+	} else if password != creds.Password {
 		response := map[string]string{"message": "Invalid username or password"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	token := generateSecureRandomString(32)
-	var timeout string = "2024-4-2  00:00:00"
-	err = model.WriteUserTokenToDB(id, token, timeout)
+	now := time.Now()
+	timeout := now.AddDate(0, 0, 30).Format("2006-01-02 15:04:05")
+	err = model.UserTokenToDB(id, token, timeout)
 	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusUnauthorized)
 	}
@@ -40,7 +41,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+func AccControllerRegister(w http.ResponseWriter, r *http.Request) {
 	var creds entities.Account
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
@@ -54,7 +55,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	
+
 	model.WriteUserToDB(creds.Username, creds.Password)
 	response := map[string]string{"message": "Create sucessful"}
 	json.NewEncoder(w).Encode(response)

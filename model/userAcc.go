@@ -8,7 +8,7 @@ import (
 
 var Direct_Backend_DB string = "user:password1234@tcp(127.0.0.1:3306)/Direct_Backend_DB"
 
-func WriteUserToDB(username string, password string) (error) {
+func WriteUserToDB(username string, password string) error {
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
 		return err
@@ -19,7 +19,7 @@ func WriteUserToDB(username string, password string) (error) {
 		return err
 	}
 
-	qr := "INSERT INTO USER (USER_EMAIL, USER_PASSWORD, USER_IS_DEL) VALUES('" + username + "','" + password + "', 0)"
+	qr := "INSERT INTO USER (USER_EMAIL, USER_PASSWORD, USER_IS_PRIVATE, USER_IS_DEL) VALUES('" + username + "','" + password + "', 0, 0)"
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -47,7 +47,6 @@ func ReadUserPasswordFromDB(username string) (string, int, error) {
 		return "", -1, err
 	}
 
-
 	var dbPassword string
 	var dbID int
 	rows.Next()
@@ -57,4 +56,3 @@ func ReadUserPasswordFromDB(username string) (string, int, error) {
 	defer db.Close()
 	return dbPassword, dbID, err
 }
-
