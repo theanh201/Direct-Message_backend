@@ -60,12 +60,12 @@ func AccRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Validate username
-	if validMail(creds.Username) {
+	if !validMail(creds.Username) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 	// Validate password
-	if validToken(creds.Password) {
+	if !validToken(creds.Password) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}

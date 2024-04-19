@@ -12,10 +12,9 @@ type Token struct {
 }
 
 type AccountInfo struct {
-	UserEmail       string
-	UserPhoneNumber string
-	UserName        string
-	UserAvatar      string
-	UserBackground  string
-	UserIsPrivate   bool
+	UserEmail      string
+	UserName       string
+	UserAvatar     string
+	UserBackground string
+	UserIsPrivate  bool
 }

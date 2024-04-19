@@ -13,11 +13,11 @@ func main() {
 	router.HandleFunc("/login", controller.AccLogin).Methods("POST")
 	router.HandleFunc("/register", controller.AccRegister).Methods("POST")
 	router.HandleFunc("/get-self-info", controller.AccGetSelfInfo).Methods("GET")
+	router.HandleFunc("/get-avatar", controller.AccGetAvatar).Methods("GET")
 	// router.HandleFunc("/get-info", controller.SearchControllerGetUsername).Methods("POST")
 	router.HandleFunc("/update-avatar", controller.AccUpdateAvatar).Methods("PUT")
 	router.HandleFunc("/update-background", controller.AccUpdateBackground).Methods("PUT")
 	router.HandleFunc("/update-email", controller.AccUpdateEmail).Methods("PUT")
-	router.HandleFunc("/update-phone-number", controller.AccUpdatePhoneNumber).Methods("PUT")
 	router.HandleFunc("/update-password", controller.AccUpdatePassword).Methods("PUT")
 	router.HandleFunc("/update-name", controller.AccUpdateName).Methods("PUT")
 

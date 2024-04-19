@@ -164,37 +164,6 @@ func AccUpdateEmail(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func AccUpdatePhoneNumber(w http.ResponseWriter, r *http.Request) {
-	// Validate token
-	token := r.FormValue("token")
-	if !validToken(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
-		return
-	}
-	// Update phone number
-	phoneNumb := r.FormValue("phoneNumb")
-	if validPhoneNumber(phoneNumb) {
-		err = model.AccUpdatePhoneNumb(id, phoneNumb)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
-	} else {
-		http.Error(w, "No valid phone number found", http.StatusUnauthorized)
-		return
-	}
-	// Reponse
-	response := map[string]string{"message": "Phone number have been updated"}
-	json.NewEncoder(w).Encode(response)
-}
 func AccUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
@@ -226,6 +195,7 @@ func AccUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"message": "Password have been updated"}
 	json.NewEncoder(w).Encode(response)
 }
+
 func AccUpdateName(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")

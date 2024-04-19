@@ -28,12 +28,6 @@ curl -X PUT \
 -F 'token=61ce5c6547de8b32b2c8895836be19b0a06993076234a13c2f3a4ef5d773b1ed' \
 localhost:8080/update-email
 
-// Update phone number this will mark all current token as deleted
-curl -X PUT \
--F 'phoneNumb=0123456789' \
--F 'token=61ce5c6547de8b32b2c8895836be19b0a06993076234a13c2f3a4ef5d773b1ed' \
-localhost:8080/update-phone-number
-
 // Update password
 curl -X PUT \
 -F 'password=a9e986de49be77b63571db377f60f76213d9a22471a551a37adcd8a88f26f411' \
@@ -50,4 +44,11 @@ localhost:8080/update-name
 curl -X GET \
 -F 'token=9fdd52a08e2b4b15287216317c584dbc41febbffb297f5e0a385ebc6dfde4031' \
 localhost:8080/get-self-info
+
+// Get avatar
+curl -X GET -F 'imgName=1.jpg' \
+-F 'token=2429560b4977ad5373e4415ce456125af9839c6daa8de9a83f5a85d737f7fb3e' \
+localhost:8080/get-avatar \
+--output 1.jpg
+
 ```
