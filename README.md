@@ -69,3 +69,11 @@ curl -X GET -F 'imgName=1.jpg' \
 localhost:8080/get-background \
 --output 1.jpg
 ```
+### DELETE
+``` bash
+// Delete self
+curl -X DELETE -F 'email=user1@mail.com' \
+-F 'password=12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9' \
+-F 'token=1679acb67da0b7c5233aaa615bc38b39678d3dd3dd36b2e5b63409e98dbe5941' \
+localhost:8080/delete-self
+```

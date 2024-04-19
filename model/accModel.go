@@ -32,7 +32,6 @@ func AccWriteUser(username string, password string) error {
 	return err
 }
 
-// return Password, Id, Error
 func AccReadUserPassword(username string) (password string, id int, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
@@ -222,4 +221,31 @@ func AccGetSelf(id int) (info entities.AccountInfo, err error) {
 	// Close
 	defer db.Close()
 	return info, err
+}
+
+func AccDelete(id int) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	// Update delete status
+	qr := fmt.Sprintf("UPDATE USER SET USER_IS_DEL=1 WHERE USER_ID=%d;", id)
+	_, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	// Revoke token
+	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d;", id)
+	_, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	// Close
+	defer db.Close()
+	return err
 }
