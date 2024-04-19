@@ -9,43 +9,43 @@ import (
 )
 
 func UserTokenAddToDB(id int, token string, timeout string) error {
+	// Check db
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
 		return err
 	}
-
 	err = db.Ping()
 	if err != nil {
 		return err
 	}
-
+	// Add to db
 	qr := "INSERT INTO USER_TOKEN(USER_TOKEN, USER_ID, USER_TOKEN_TIMEOUT, USER_TOKEN_IS_DEL) VALUES(x'" + token + "', " + fmt.Sprint(id) + ", '" + timeout + "', 0);"
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
-
+	// Close
 	defer db.Close()
 	return err
 }
 
 func UserTokenValidate(token string) (valid bool, id int, err error) {
+	// Check db
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
 		return false, -1, err
 	}
-
 	err = db.Ping()
 	if err != nil {
 		return false, -1, err
 	}
-
+	// Query token
 	qr := "SELECT USER_ID, USER_TOKEN_TIMEOUT FROM USER_TOKEN WHERE USER_TOKEN = x'" + token + "' AND USER_TOKEN_IS_DEL = 0;"
 	rows, err := db.Query(qr)
 	if err != nil {
 		return false, -1, err
 	}
-
+	// Decode timeout
 	var timeout string
 	rows.Next()
 	if err := rows.Scan(&id, &timeout); err != nil {
@@ -56,12 +56,12 @@ func UserTokenValidate(token string) (valid bool, id int, err error) {
 	if err != nil {
 		return false, -1, err
 	}
-
+	// Validate time
 	now := time.Now()
 	if t.Before(now) {
 		return false, -1, err
 	}
-
+	// Close
 	defer db.Close()
 	return true, id, err
 }
