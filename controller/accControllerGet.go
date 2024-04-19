@@ -3,7 +3,6 @@ package controller
 import (
 	"DirectBackend/model"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -16,7 +15,7 @@ func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !valid {
 		http.Error(w, "Token expired", http.StatusUnauthorized)

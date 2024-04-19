@@ -30,7 +30,7 @@ func AccUpdateAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !valid {
 		http.Error(w, "Token expired", http.StatusUnauthorized)
@@ -90,7 +90,7 @@ func AccUpdateBackground(w http.ResponseWriter, r *http.Request) {
 	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !valid {
 		http.Error(w, "Token expired", http.StatusUnauthorized)
@@ -143,7 +143,7 @@ func AccUpdateEmail(w http.ResponseWriter, r *http.Request) {
 	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !valid {
 		http.Error(w, "Token expired", http.StatusUnauthorized)
@@ -154,7 +154,7 @@ func AccUpdateEmail(w http.ResponseWriter, r *http.Request) {
 	if validMail(email) {
 		err = model.AccUpdateEmail(id, email)
 		if err != nil {
-			http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
@@ -175,7 +175,7 @@ func AccUpdatePhoneNumber(w http.ResponseWriter, r *http.Request) {
 	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !valid {
 		http.Error(w, "Token expired", http.StatusUnauthorized)
@@ -186,7 +186,7 @@ func AccUpdatePhoneNumber(w http.ResponseWriter, r *http.Request) {
 	if validPhoneNumber(phoneNumb) {
 		err = model.AccUpdatePhoneNumb(id, phoneNumb)
 		if err != nil {
-			http.Error(w, fmt.Sprint(err), http.StatusUnauthorized)
+			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 	} else {
@@ -221,7 +221,7 @@ func AccUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !valid {
 		http.Error(w, "Token expired", http.StatusUnauthorized)
@@ -232,7 +232,7 @@ func AccUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	if len(password) == 64 {
 		err = model.AccUpdatePassword(id, password)
 		if err != nil {
-			http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
@@ -252,7 +252,7 @@ func AccUpdateName(w http.ResponseWriter, r *http.Request) {
 	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !valid {
 		http.Error(w, "Token expired", http.StatusUnauthorized)
@@ -263,7 +263,7 @@ func AccUpdateName(w http.ResponseWriter, r *http.Request) {
 	if len(name) <= 64 {
 		err = model.AccUpdateName(id, name)
 		if err != nil {
-			http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {

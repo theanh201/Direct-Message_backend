@@ -6,7 +6,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -32,7 +31,7 @@ func AccLogin(w http.ResponseWriter, r *http.Request) {
 	// Compare password
 	password, id, err := model.AccReadUserPassword(creds.Username)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if password != creds.Password {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
@@ -44,7 +43,7 @@ func AccLogin(w http.ResponseWriter, r *http.Request) {
 	timeout := now.AddDate(0, 0, 30).Format("2006-01-02 15:04:05")
 	err = model.UserTokenAddToDB(id, token, timeout)
 	if err != nil {
-		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	// Response
