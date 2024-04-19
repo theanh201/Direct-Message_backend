@@ -48,7 +48,7 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Token expired", http.StatusUnauthorized)
 		return
 	}
-	// Get image
+	// Get image if imgId = tokenId
 	imgName := r.FormValue("imgName")
 	imgId, err := strconv.Atoi(strings.Split(imgName, ".")[0])
 	if err != nil {
@@ -57,17 +57,53 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 	if id == imgId {
 		http.ServeFile(w, r, fmt.Sprintf("./avatar/%s", imgName))
 		return
-	} else {
-		info, err := model.AccGetSelf(imgId)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		if info.UserIsPrivate {
-			http.Error(w, "User is private", http.StatusUnauthorized)
-			return
-		}
-		http.ServeFile(w, r, fmt.Sprintf("./avatar/%s", imgName))
+	}
+	// Get imgage if imgId != private
+	info, err := model.AccGetSelf(imgId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if info.UserIsPrivate {
+		http.Error(w, "User is private", http.StatusUnauthorized)
+		return
+	}
+	http.ServeFile(w, r, fmt.Sprintf("./avatar/%s", imgName))
+}
+func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	token := r.FormValue("token")
+	if !validToken(token) {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+	valid, id, err := model.UserTokenValidate(token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else if !valid {
+		http.Error(w, "Token expired", http.StatusUnauthorized)
+		return
+	}
+	// Get image if imgId = tokenId
+	imgName := r.FormValue("imgName")
+	imgId, err := strconv.Atoi(strings.Split(imgName, ".")[0])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	if id == imgId {
+		http.ServeFile(w, r, fmt.Sprintf("./background/%s", imgName))
+		return
+	}
+	// Get imgage if imgId != private
+	info, err := model.AccGetSelf(imgId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if info.UserIsPrivate {
+		http.Error(w, "User is private", http.StatusUnauthorized)
+		return
+	}
+	http.ServeFile(w, r, fmt.Sprintf("./background/%s", imgName))
 }
