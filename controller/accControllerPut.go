@@ -220,10 +220,43 @@ func AccUpdateName(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		http.Error(w, "", http.StatusBadRequest)
+		http.Error(w, "len(name) > 64", http.StatusBadRequest)
 		return
 	}
 	// Reponse
 	response := map[string]string{"message": "Name have been updated"}
 	json.NewEncoder(w).Encode(response)
+}
+
+func AccUpdatePrivateStatus(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	token := r.FormValue("token")
+	if !validToken(token) {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+	valid, id, err := model.UserTokenValidate(token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else if !valid {
+		http.Error(w, "Token expired", http.StatusUnauthorized)
+		return
+	}
+	// Update private status
+	status := r.FormValue("isPrivate")
+	if len(status) == 1 {
+		err = model.AccUpdatePrivateStatus(id, status)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		http.Error(w, "len(isPrivate) != 1", http.StatusBadRequest)
+		return
+	}
+	// Reponse
+	response := map[string]string{"message": "Private status have been updated"}
+	json.NewEncoder(w).Encode(response)
+
 }

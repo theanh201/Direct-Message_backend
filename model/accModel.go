@@ -145,7 +145,7 @@ func AccUpdateAvatar(id int, avatar string) (err error) {
 	if err != nil {
 		return err
 	}
-	// Update name
+	// Update avatar
 	qr := fmt.Sprintf("UPDATE USER SET USER_AVATAR='%s' WHERE USER_ID=%d;", avatar, id)
 	_, err = db.Query(qr)
 	if err != nil {
@@ -166,7 +166,7 @@ func AccUpdateBackground(id int, avatar string) (err error) {
 	if err != nil {
 		return err
 	}
-	// Update name
+	// Update background
 	qr := fmt.Sprintf("UPDATE USER SET USER_BACKGROUND='%s' WHERE USER_ID=%d;", avatar, id)
 	_, err = db.Query(qr)
 	if err != nil {
@@ -177,6 +177,26 @@ func AccUpdateBackground(id int, avatar string) (err error) {
 	return err
 }
 
+func AccUpdatePrivateStatus(id int, status string) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	// Update private status
+	qr := fmt.Sprintf("UPDATE USER SET USER_IS_PRIVATE=%s WHERE USER_ID=%d;", status, id)
+	_, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	// Close
+	defer db.Close()
+	return err
+}
 func AccGetSelf(id int) (info entities.AccountInfo, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)

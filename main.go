@@ -21,6 +21,7 @@ func main() {
 	router.HandleFunc("/update-email", controller.AccUpdateEmail).Methods("PUT")
 	router.HandleFunc("/update-password", controller.AccUpdatePassword).Methods("PUT")
 	router.HandleFunc("/update-name", controller.AccUpdateName).Methods("PUT")
+	router.HandleFunc("/update-private-status", controller.AccUpdatePrivateStatus).Methods("PUT")
 
 	router.HandleFunc("/test", test)
 	log.Fatal(http.ListenAndServe(":8080", router))

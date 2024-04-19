@@ -1,5 +1,7 @@
 # Direct-Message_backend
-```
+## Account stuff
+### POST
+``` bash
 // Register
 curl -X POST -H "Content-Type: application/json" \
 -d '{"username":"user1@mail.com", "password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' \
@@ -9,7 +11,9 @@ http://localhost:8080/register
 curl -X POST -H "Content-Type: application/json" \
 -d '{"username":"user1@mail.com","password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' \
 http://localhost:8080/login
-
+```
+### PUT
+``` bash
 // Update avatar
 curl -X PUT \
 -F 'avatar=@/home/user/MEGA/Pictures/Wallpapers/windowChan.jpg' \
@@ -40,6 +44,14 @@ curl -X PUT \
 -F 'token=61ce5c6547de8b32b2c8895836be19b0a06993076234a13c2f3a4ef5d773b1ed' \
 localhost:8080/update-name
 
+// Update private status
+curl -X PUT \
+-F 'isPrivate=0' \
+-F 'token=35056c1de6791fd5a2a8f74da5d5be29d4631812210a0570fda8802ae403e90b' \
+localhost:8080/update-private-status
+```
+### GET
+``` bash
 // Get self info
 curl -X GET \
 -F 'token=a5e763f83a5b302c3b9b638c8e3d03a28cac2d62a91fb7a810485ab4d51aa189' \
@@ -56,5 +68,4 @@ curl -X GET -F 'imgName=1.jpg' \
 -F 'token=1ed94aa91c02a21b773c1146d9b01fb542008f20e646a30a51fba93ff1257655' \
 localhost:8080/get-background \
 --output 1.jpg
-
 ```
