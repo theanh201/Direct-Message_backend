@@ -22,7 +22,7 @@ func AccWriteUser(username string, password string) error {
 		return err
 	}
 	// Add username and password to DB
-	qr := fmt.Sprintf("INSERT INTO USER(USER_EMAIL, USER_PHONE_NUMB, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES ('%s', '', x'%s', '', '', '', 0, 0);", username, password)
+	qr := fmt.Sprintf("INSERT INTO USER(USER_EMAIL, USER_PHONE_NUMB, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES ('%s', '', x'%s', '%s', '', '', 0, 0);", username, password, username)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err

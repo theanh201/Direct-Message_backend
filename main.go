@@ -21,10 +21,9 @@ func main() {
 	router.HandleFunc("/update-password", controller.AccUpdatePassword).Methods("PUT")
 	router.HandleFunc("/update-name", controller.AccUpdateName).Methods("PUT")
 
-	// router.HandleFunc("/test", test)
-	log.Fatal(http.ListenAndServe(":8090", router))
+	router.HandleFunc("/test", test)
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
 func test(w http.ResponseWriter, r *http.Request) {
 	// http.ServeFile(w, r, "./asset/test.txt")
-	http.ServeFile(w, r, "./asset/test2.txt")
 }

@@ -12,7 +12,17 @@ import (
 	"unicode"
 )
 
+// 10 MB
+const MAX_REQUEST_SIZE = 10 << 20
+
 func AccUpdateAvatar(w http.ResponseWriter, r *http.Request) {
+	// Limit request size
+	r.Body = http.MaxBytesReader(w, r.Body, MAX_REQUEST_SIZE)
+	err := r.ParseMultipartForm(MAX_REQUEST_SIZE)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	// Validate token
 	token := r.FormValue("token")
 	valid, id, err := model.UserTokenValidate(token)
@@ -27,10 +37,10 @@ func AccUpdateAvatar(w http.ResponseWriter, r *http.Request) {
 	file, fileHeader, err := r.FormFile("avatar")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 	defer file.Close()
-	// Create the uploads folder if it doesn't
-	// already exist
+	// Create the uploads folder if it doesn't already exist
 	err = os.MkdirAll("avatar", os.ModePerm)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -62,6 +72,13 @@ func AccUpdateAvatar(w http.ResponseWriter, r *http.Request) {
 }
 
 func AccUpdateBackground(w http.ResponseWriter, r *http.Request) {
+	// Limit request size
+	r.Body = http.MaxBytesReader(w, r.Body, MAX_REQUEST_SIZE)
+	err := r.ParseMultipartForm(MAX_REQUEST_SIZE)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	// Validate token
 	token := r.FormValue("token")
 	valid, id, err := model.UserTokenValidate(token)

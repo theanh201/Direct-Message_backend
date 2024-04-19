@@ -13,7 +13,7 @@ http://localhost:8080/login
 // Update avatar
 curl -X PUT \
 -F 'avatar=@/home/user/MEGA/Pictures/Wallpapers/windowChan.jpg' \
--F 'token=c26182220bc8e58097782baee9c805765e04d331140749ee483bf6cac7134c5a' \
+-F 'token=2429560b4977ad5373e4415ce456125af9839c6daa8de9a83f5a85d737f7fb3e' \
 localhost:8080/update-avatar
 
 // Update background
@@ -48,6 +48,6 @@ localhost:8080/update-name
 
 // Get self info
 curl -X GET \
--F 'token=ed2bd7be97182347b79f328591ba59937738e53245e0f676bc13d3688ddcea72' \
+-F 'token=9fdd52a08e2b4b15287216317c584dbc41febbffb297f5e0a385ebc6dfde4031' \
 localhost:8080/get-self-info
 ```
