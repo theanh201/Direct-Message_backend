@@ -10,6 +10,10 @@ import (
 func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
+	if len(token) != 64 {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)

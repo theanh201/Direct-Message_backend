@@ -12,19 +12,22 @@ import (
 	"unicode"
 )
 
-// 10 MB
-const MAX_REQUEST_SIZE = 10 << 20
+const MAX_REQUEST_IMG = 10 << 20 // 10 MB
 
 func AccUpdateAvatar(w http.ResponseWriter, r *http.Request) {
 	// Limit request size
-	r.Body = http.MaxBytesReader(w, r.Body, MAX_REQUEST_SIZE)
-	err := r.ParseMultipartForm(MAX_REQUEST_SIZE)
+	r.Body = http.MaxBytesReader(w, r.Body, MAX_REQUEST_IMG)
+	err := r.ParseMultipartForm(MAX_REQUEST_IMG)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Validate token
 	token := r.FormValue("token")
+	if len(token) != 64 {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
@@ -73,14 +76,18 @@ func AccUpdateAvatar(w http.ResponseWriter, r *http.Request) {
 
 func AccUpdateBackground(w http.ResponseWriter, r *http.Request) {
 	// Limit request size
-	r.Body = http.MaxBytesReader(w, r.Body, MAX_REQUEST_SIZE)
-	err := r.ParseMultipartForm(MAX_REQUEST_SIZE)
+	r.Body = http.MaxBytesReader(w, r.Body, MAX_REQUEST_IMG)
+	err := r.ParseMultipartForm(MAX_REQUEST_IMG)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Validate token
 	token := r.FormValue("token")
+	if len(token) != 64 {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
@@ -96,8 +103,7 @@ func AccUpdateBackground(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
-	// Create the uploads folder if it doesn't
-	// already exist
+	// Create the uploads folder if it doesn't already exist
 	err = os.MkdirAll("background", os.ModePerm)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -127,9 +133,14 @@ func AccUpdateBackground(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"message": "Background have been updated"}
 	json.NewEncoder(w).Encode(response)
 }
+
 func AccUpdateEmail(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
+	if len(token) != 64 {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
@@ -154,9 +165,14 @@ func AccUpdateEmail(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"message": "Email address have been updated"}
 	json.NewEncoder(w).Encode(response)
 }
+
 func AccUpdatePhoneNumber(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
+	if len(token) != 64 {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
@@ -199,6 +215,10 @@ func validPhoneNumber(s string) bool {
 func AccUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
+	if len(token) != 64 {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
@@ -226,6 +246,10 @@ func AccUpdatePassword(w http.ResponseWriter, r *http.Request) {
 func AccUpdateName(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
+	if len(token) != 64 {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
 	valid, id, err := model.UserTokenValidate(token)
 	if err != nil {
 		http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
