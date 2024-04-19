@@ -19,12 +19,12 @@ func AccLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Validate username
-	if len(creds.Username) > 64 {
+	if !validMail(creds.Username) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 	// Validate password
-	if len(creds.Password) != 64 {
+	if !validToken(creds.Password) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
@@ -60,23 +60,19 @@ func AccRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Validate username
-	if len(creds.Username) > 64 {
+	if validMail(creds.Username) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	// Check username availavble
-	if !validMail(creds.Username) {
-		http.Error(w, "Invalid Email", http.StatusBadRequest)
-		return
-	}
-	if len(creds.Password) != 64 {
+	// Validate password
+	if validToken(creds.Password) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 	// Check if user already exsist
 	_, id, _ := model.AccReadUserPassword(creds.Username)
 	if id != -1 {
-		response := map[string]string{"message": " already exsist"}
+		response := map[string]string{"message": "Username already exsist"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}

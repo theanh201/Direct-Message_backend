@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/mail"
 	"os"
 	"path/filepath"
-	"unicode"
 )
 
 const MAX_REQUEST_IMG = 10 << 20 // 10 MB
@@ -24,7 +22,7 @@ func AccUpdateAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 	// Validate token
 	token := r.FormValue("token")
-	if len(token) != 64 {
+	if !validToken(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -84,7 +82,7 @@ func AccUpdateBackground(w http.ResponseWriter, r *http.Request) {
 	}
 	// Validate token
 	token := r.FormValue("token")
-	if len(token) != 64 {
+	if !validToken(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -137,7 +135,7 @@ func AccUpdateBackground(w http.ResponseWriter, r *http.Request) {
 func AccUpdateEmail(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if len(token) != 64 {
+	if !validToken(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -158,7 +156,7 @@ func AccUpdateEmail(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		http.Error(w, "No valid email found", http.StatusBadRequest)
+		http.Error(w, "Not valid email found", http.StatusBadRequest)
 		return
 	}
 	// Response
@@ -169,7 +167,7 @@ func AccUpdateEmail(w http.ResponseWriter, r *http.Request) {
 func AccUpdatePhoneNumber(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if len(token) != 64 {
+	if !validToken(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -197,25 +195,10 @@ func AccUpdatePhoneNumber(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"message": "Phone number have been updated"}
 	json.NewEncoder(w).Encode(response)
 }
-func validMail(email string) bool {
-	_, err := mail.ParseAddress(email)
-	return err == nil
-}
-func validPhoneNumber(s string) bool {
-	if len(s) != 10 {
-		return false
-	}
-	for _, c := range s {
-		if !unicode.IsDigit(c) {
-			return false
-		}
-	}
-	return true
-}
 func AccUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if len(token) != 64 {
+	if !validToken(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -246,7 +229,7 @@ func AccUpdatePassword(w http.ResponseWriter, r *http.Request) {
 func AccUpdateName(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if len(token) != 64 {
+	if !validToken(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}

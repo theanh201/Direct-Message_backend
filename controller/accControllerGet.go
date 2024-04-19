@@ -9,7 +9,7 @@ import (
 func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if len(token) != 64 {
+	if !validToken(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
