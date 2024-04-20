@@ -28,6 +28,32 @@ func AccWriteUser(username string, password string) error {
 	if err != nil {
 		return err
 	}
+	// Read  ID
+	qr = fmt.Sprintf("SELECT USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0;", username)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	var id int
+	rows.Next()
+	if err := rows.Scan(&id); err != nil {
+		return err
+	}
+	// Create empty ik spk
+	qr = fmt.Sprintf("INSERT INTO USER_KEY(USER_ID, USER_KEY_IK, USER_KEY_SPK) VALUES (%d, '', '')", id)
+	_, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	// Create 5 opk
+	for i := 0; i < 5; i++ {
+		qr = fmt.Sprintf("INSERT INTO USER_OPK_KEY(USER_ID, USER_OPK_KEY, USER_OPK_KEY_IS_DEL) VALUES (%d, '%d', 0)", id, i)
+		_, err = db.Query(qr)
+		if err != nil {
+			return err
+		}
+	}
 	// Close
 	return err
 }
