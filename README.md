@@ -78,9 +78,14 @@ curl -X DELETE -F 'email=user1@mail.com' \
 localhost:8080/delete-self
 ```
 ## Add friend stuff
+### GET
 ``` bash
 // Search by name
-curl -X GET -F 'name=user1@mail.com' \
+curl -X GET -F 'name=user' \
 -F 'token=d779737d73332c2db9e7c709019a2626970a0f162b3fa4c0fe57b88fed1d9c82' \
 localhost:8080/get-by-name
+// Search by email
+curl -X GET -F 'email=user1@mail.com' \
+-F 'token=d779737d73332c2db9e7c709019a2626970a0f162b3fa4c0fe57b88fed1d9c82' \
+localhost:8080/get-by-email
 ```

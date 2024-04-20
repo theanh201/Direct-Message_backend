@@ -18,3 +18,10 @@ type AccountInfo struct {
 	UserBackground string
 	UserIsPrivate  bool
 }
+
+type AccountInfExcludePrivateStatus struct {
+	UserEmail      string
+	UserName       string
+	UserAvatar     string
+	UserBackground string
+}

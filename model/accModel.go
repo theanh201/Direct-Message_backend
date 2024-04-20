@@ -253,7 +253,7 @@ func AccDelete(id int) (err error) {
 	return err
 }
 
-func AccGetUserByName(name string) (result []entities.AccountInfo, err error) {
+func AccGetUserByName(name string) (result []entities.AccountInfExcludePrivateStatus, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -272,7 +272,7 @@ func AccGetUserByName(name string) (result []entities.AccountInfo, err error) {
 		return result, err
 	}
 	defer row.Close()
-	var info entities.AccountInfo
+	var info entities.AccountInfExcludePrivateStatus
 	for row.Next() {
 		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
 			return result, err
@@ -281,4 +281,31 @@ func AccGetUserByName(name string) (result []entities.AccountInfo, err error) {
 	}
 	// Close
 	return result, err
+}
+
+func AccGetUserByEmail(email string) (info entities.AccountInfExcludePrivateStatus, err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return info, err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return info, err
+	}
+	// Get info
+	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_EMAIL LIKE '%s' AND USER_IS_DEL = 0", email)
+	row, err := db.Query(qr)
+	if err != nil {
+		return info, err
+	}
+	defer row.Close()
+	for row.Next() {
+		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
+			return info, err
+		}
+	}
+	// Close
+	return info, err
 }

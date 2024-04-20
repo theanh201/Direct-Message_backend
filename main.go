@@ -25,5 +25,6 @@ func main() {
 	router.HandleFunc("/delete-self", controller.DeleteSelf).Methods("DELETE")
 	// Search friend
 	router.HandleFunc("/get-by-name", controller.AccGetUserByName).Methods("GET")
+	router.HandleFunc("/get-by-email", controller.AccGetUserByEmail).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
