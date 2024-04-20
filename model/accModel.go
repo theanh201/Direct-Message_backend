@@ -17,6 +17,7 @@ func AccWriteUser(username string, password string) error {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return err
@@ -28,7 +29,6 @@ func AccWriteUser(username string, password string) error {
 		return err
 	}
 	// Close
-	defer db.Close()
 	return err
 }
 
@@ -38,16 +38,18 @@ func AccReadUserPassword(username string) (password string, id int, err error) {
 	if err != nil {
 		return "", -1, err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return "", -1, err
 	}
 	// Read Password and ID
-	qr := "SELECT USER_PASSWORD, USER_ID FROM USER WHERE USER_EMAIL='" + username + "';"
+	qr := fmt.Sprintf("SELECT USER_PASSWORD, USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0;", username)
 	rows, err := db.Query(qr)
 	if err != nil {
 		return "", -1, err
 	}
+	defer rows.Close()
 	var dbPassword []byte
 	rows.Next()
 	if err := rows.Scan(&dbPassword, &id); err != nil {
@@ -55,7 +57,6 @@ func AccReadUserPassword(username string) (password string, id int, err error) {
 	}
 	password = hex.EncodeToString(dbPassword)
 	// Close
-	defer db.Close()
 	return password, id, err
 }
 
@@ -65,6 +66,7 @@ func AccUpdateEmail(id int, email string) (err error) {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return err
@@ -82,7 +84,6 @@ func AccUpdateEmail(id int, email string) (err error) {
 		return err
 	}
 	// Close
-	defer db.Close()
 	return err
 }
 
@@ -92,6 +93,7 @@ func AccUpdatePassword(id int, password string) (err error) {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return err
@@ -109,7 +111,6 @@ func AccUpdatePassword(id int, password string) (err error) {
 		return err
 	}
 	// Close
-	defer db.Close()
 	return err
 }
 
@@ -119,6 +120,7 @@ func AccUpdateName(id int, name string) (err error) {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return err
@@ -140,6 +142,7 @@ func AccUpdateAvatar(id int, avatar string) (err error) {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return err
@@ -151,7 +154,6 @@ func AccUpdateAvatar(id int, avatar string) (err error) {
 		return err
 	}
 	// Close
-	defer db.Close()
 	return err
 }
 
@@ -161,6 +163,7 @@ func AccUpdateBackground(id int, avatar string) (err error) {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return err
@@ -172,7 +175,6 @@ func AccUpdateBackground(id int, avatar string) (err error) {
 		return err
 	}
 	// Close
-	defer db.Close()
 	return err
 }
 
@@ -182,6 +184,7 @@ func AccUpdatePrivateStatus(id int, status string) (err error) {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return err
@@ -193,7 +196,6 @@ func AccUpdatePrivateStatus(id int, status string) (err error) {
 		return err
 	}
 	// Close
-	defer db.Close()
 	return err
 }
 func AccGetSelf(id int) (info entities.AccountInfo, err error) {
@@ -202,6 +204,7 @@ func AccGetSelf(id int) (info entities.AccountInfo, err error) {
 	if err != nil {
 		return info, err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return info, err
@@ -212,6 +215,7 @@ func AccGetSelf(id int) (info entities.AccountInfo, err error) {
 	if err != nil {
 		return info, err
 	}
+	defer row.Close()
 	var temp []byte
 	row.Next()
 	if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground, &temp); err != nil {
@@ -219,7 +223,6 @@ func AccGetSelf(id int) (info entities.AccountInfo, err error) {
 	}
 	info.UserIsPrivate = (temp[0] & 1) != 0
 	// Close
-	defer db.Close()
 	return info, err
 }
 
@@ -229,6 +232,7 @@ func AccDelete(id int) (err error) {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return err
@@ -246,6 +250,35 @@ func AccDelete(id int) (err error) {
 		return err
 	}
 	// Close
-	defer db.Close()
 	return err
+}
+
+func AccGetUserByName(name string) (result []entities.AccountInfo, err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return result, err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return result, err
+	}
+	// Get info
+	name = name + "%"
+	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE '%s' AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0", name)
+	row, err := db.Query(qr)
+	if err != nil {
+		return result, err
+	}
+	defer row.Close()
+	var info entities.AccountInfo
+	for row.Next() {
+		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
+			return result, err
+		}
+		result = append(result, info)
+	}
+	// Close
+	return result, err
 }

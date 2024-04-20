@@ -23,5 +23,7 @@ func main() {
 	router.HandleFunc("/get-avatar", controller.AccGetAvatar).Methods("GET")
 	router.HandleFunc("/get-background", controller.AccGetBackGround).Methods("GET")
 	router.HandleFunc("/delete-self", controller.DeleteSelf).Methods("DELETE")
+	// Search friend
+	router.HandleFunc("/get-by-name", controller.AccGetUserByName).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
