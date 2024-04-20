@@ -77,7 +77,11 @@ func AccRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Add user and response
-	model.AccWriteUser(creds.Username, creds.Password)
+	err = model.AccWriteUser(creds.Username, creds.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	response := map[string]string{"message": "Create sucessful"}
 	json.NewEncoder(w).Encode(response)
 }
