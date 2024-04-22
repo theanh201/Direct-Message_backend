@@ -48,9 +48,12 @@ func PrekeyBundleUpdate(w http.ResponseWriter, r *http.Request) {
 	opk := strings.Split(r.FormValue("opk"), ",")
 	for _, val := range opk {
 		if !validToken(val) {
-			http.Error(w, "Invalid spk", http.StatusBadRequest)
+			http.Error(w, "Invalid opk", http.StatusBadRequest)
 			return
 		}
+	}
+	if len(opk) > 5 {
+		http.Error(w, "Max 5 opk", http.StatusBadRequest)
 	}
 	err = model.KeyBundleUpdateOpk(id, opk)
 	if err != nil {

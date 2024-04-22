@@ -29,6 +29,6 @@ func main() {
 	// Add prekeyBundle
 	router.HandleFunc("/update-prekey-bundle", controller.PrekeyBundleUpdate).Methods("PUT")
 	// Add friend phase 1
-	router.HandleFunc("/get-friend", controller.X3DHPhase1).Methods("GET")
+	router.HandleFunc("/x3dh-phase1", controller.X3DHPhase1).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
