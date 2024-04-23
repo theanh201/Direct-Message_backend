@@ -23,13 +23,13 @@ func AccWriteUser(username string, password string) error {
 		return err
 	}
 	// Add username and password to DB
-	qr := fmt.Sprintf("INSERT INTO USER(USER_EMAIL, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES ('%s', x'%s', '%s', '', '', 0, 0);", username, password, username)
+	qr := fmt.Sprintf("INSERT INTO USER(USER_EMAIL, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES ('%s', x'%s', '%s', '', '', 0, 0)", username, password, username)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
 	// Read  ID
-	qr = fmt.Sprintf("SELECT USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0;", username)
+	qr = fmt.Sprintf("SELECT USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0", username)
 	rows, err := db.Query(qr)
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func AccReadUserPassword(username string) (password string, id int, err error) {
 		return "", -1, err
 	}
 	// Read Password and ID
-	qr := fmt.Sprintf("SELECT USER_PASSWORD, USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0;", username)
+	qr := fmt.Sprintf("SELECT USER_PASSWORD, USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0", username)
 	rows, err := db.Query(qr)
 	if err != nil {
 		return "", -1, err
@@ -98,13 +98,13 @@ func AccUpdateEmail(id int, email string) (err error) {
 		return err
 	}
 	// Update Email
-	qr := fmt.Sprintf("UPDATE USER SET USER_EMAIL='%s' WHERE USER_ID=%d;", email, id)
+	qr := fmt.Sprintf("UPDATE USER SET USER_EMAIL='%s' WHERE USER_ID=%d", email, id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
 	// Revoke token
-	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d;", id)
+	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -125,13 +125,13 @@ func AccUpdatePassword(id int, password string) (err error) {
 		return err
 	}
 	// Update password
-	qr := fmt.Sprintf("UPDATE USER SET USER_PASSWORD=x'%s' WHERE USER_ID=%d;", password, id)
+	qr := fmt.Sprintf("UPDATE USER SET USER_PASSWORD=x'%s' WHERE USER_ID=%d", password, id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
 	// Revoke token
-	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d;", id)
+	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -152,7 +152,7 @@ func AccUpdateName(id int, name string) (err error) {
 		return err
 	}
 	// Update name
-	qr := fmt.Sprintf("UPDATE USER SET USER_NAME='%s' WHERE USER_ID=%d;", name, id)
+	qr := fmt.Sprintf("UPDATE USER SET USER_NAME='%s' WHERE USER_ID=%d", name, id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -174,7 +174,7 @@ func AccUpdateAvatar(id int, avatar string) (err error) {
 		return err
 	}
 	// Update avatar
-	qr := fmt.Sprintf("UPDATE USER SET USER_AVATAR='%s' WHERE USER_ID=%d;", avatar, id)
+	qr := fmt.Sprintf("UPDATE USER SET USER_AVATAR='%s' WHERE USER_ID=%d", avatar, id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -195,7 +195,7 @@ func AccUpdateBackground(id int, avatar string) (err error) {
 		return err
 	}
 	// Update background
-	qr := fmt.Sprintf("UPDATE USER SET USER_BACKGROUND='%s' WHERE USER_ID=%d;", avatar, id)
+	qr := fmt.Sprintf("UPDATE USER SET USER_BACKGROUND='%s' WHERE USER_ID=%d", avatar, id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -216,7 +216,7 @@ func AccUpdatePrivateStatus(id int, status string) (err error) {
 		return err
 	}
 	// Update private status
-	qr := fmt.Sprintf("UPDATE USER SET USER_IS_PRIVATE=%s WHERE USER_ID=%d;", status, id)
+	qr := fmt.Sprintf("UPDATE USER SET USER_IS_PRIVATE=%s WHERE USER_ID=%d", status, id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -264,13 +264,13 @@ func AccDelete(id int) (err error) {
 		return err
 	}
 	// Update delete status
-	qr := fmt.Sprintf("UPDATE USER SET USER_IS_DEL=1 WHERE USER_ID=%d;", id)
+	qr := fmt.Sprintf("UPDATE USER SET USER_IS_DEL=1 WHERE USER_ID=%d", id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
 	// Revoke token
-	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d;", id)
+	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err

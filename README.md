@@ -17,13 +17,12 @@ http://localhost:8080/login
 // Update avatar
 curl -X PUT \
 -F 'avatar=@/home/user/MEGA/Pictures/Wallpapers/windowChan.jpg' \
--F 'token=28fa0704b25e5203d7202086115af975aed348e605c6c501a44cb6477bced0a5' \
+-F 'token=99e6f3bb24d151e7e7d2b9cf2c13ad47d1334ffabf9b6c89e0765a46123f8cf3' \
 localhost:8080/update-avatar
 
 // Update background
-curl -X PUT \
--F 'background=@/home/user/MEGA/Pictures/Wallpapers/windowChan.jpg' \
--F 'token=28fa0704b25e5203d7202086115af975aed348e605c6c501a44cb6477bced0a5' \
+curl -X PUT -F 'background=@/home/user/MEGA/Pictures/Wallpapers/windowChan.jpg' \
+-F 'token=99e6f3bb24d151e7e7d2b9cf2c13ad47d1334ffabf9b6c89e0765a46123f8cf3' \
 localhost:8080/update-background
 
 // Update email this will mark all current token as deleted
@@ -41,7 +40,7 @@ localhost:8080/update-password
 // Update name
 curl -X PUT \
 -F 'name=the anh' \
--F 'token=bfd4b19c287fd32707544bd43069b45901aca0c22428f5c669108c5d993f5952' \
+-F 'token=99e6f3bb24d151e7e7d2b9cf2c13ad47d1334ffabf9b6c89e0765a46123f8cf3' \
 localhost:8080/update-name
 
 // Update private status

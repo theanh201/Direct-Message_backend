@@ -19,7 +19,7 @@ func UserTokenAddToDB(id int, token string, timeout string) error {
 		return err
 	}
 	// Add to db
-	qr := "INSERT INTO USER_TOKEN(USER_TOKEN, USER_ID, USER_TOKEN_TIMEOUT, USER_TOKEN_IS_DEL) VALUES(x'" + token + "', " + fmt.Sprint(id) + ", '" + timeout + "', 0);"
+	qr := fmt.Sprintf("INSERT INTO USER_TOKEN(USER_TOKEN, USER_ID, USER_TOKEN_TIMEOUT, USER_TOKEN_IS_DEL) VALUES(x'%s', %d, '%s', 0)", token, id, timeout)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -40,7 +40,7 @@ func UserTokenValidate(token string) (valid bool, id int, err error) {
 		return false, -1, err
 	}
 	// Query token
-	qr := "SELECT USER_ID, USER_TOKEN_TIMEOUT FROM USER_TOKEN WHERE USER_TOKEN = x'" + token + "' AND USER_TOKEN_IS_DEL = 0;"
+	qr := fmt.Sprintf("SELECT USER_ID, USER_TOKEN_TIMEOUT FROM USER_TOKEN WHERE USER_TOKEN = x'%s' AND USER_TOKEN_IS_DEL = 0", token)
 	rows, err := db.Query(qr)
 	if err != nil {
 		return false, -1, err

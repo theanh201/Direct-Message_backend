@@ -60,7 +60,7 @@ func KeyBundleUpdateOpk(id int, opk []string) (err error) {
 		return err
 	}
 	// Remove old opk
-	qr := fmt.Sprintf("DELETE FROM USER_OPK_KEY WHERE USER_ID=%d;", id)
+	qr := fmt.Sprintf("DELETE FROM USER_OPK_KEY WHERE USER_ID=%d", id)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
@@ -119,7 +119,13 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 	if err := rows.Scan(&opkByte); err != nil {
 		return ik, spk, opk, err
 	}
-	// FIXME IS_DEL FOR OPK
 	opk = hex.EncodeToString(opkByte)
+	// Mark opk as IS_DEL
+	qr = fmt.Sprintf("UPDATE USER_OPK_KEY SET USER_OPK_KEY_IS_DEL=1 WHERE USER_ID=%d AND USER_OPK_KEY=x'%s'", id, opk)
+	rows, err = db.Query(qr)
+	if err != nil {
+		return ik, spk, opk, err
+	}
+	defer rows.Close()
 	return ik, spk, opk, err
 }
