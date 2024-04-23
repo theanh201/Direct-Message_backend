@@ -49,7 +49,8 @@ curl -X DELETE -F 'email=user1@mail.com' -F 'password=12a60f274133d470bd1435a8e8
 ### GET
 ``` bash
 // Search by name
-curl -X GET -F 'name=user' -F 'token=d782c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9' localhost:8080/get-by-name
+// This wont return user at position 0
+curl -X GET -F 'name=user' -F 'page=0' -F 'token=04ce9447a7cc8d61cd18d063b40bace2681de4cf7658b0ea70412268757a318f' localhost:8080/get-by-name
 // Search by email
 curl -X GET -F 'email=user1@mail.com' -F 'token=d779737d73332c2db9e7c709019a2626970a0f162b3fa4c0fe57b88fed1d9c82' localhost:8080/get-by-email
 ```

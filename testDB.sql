@@ -9,6 +9,12 @@ use Direct_Backend_DB;
 -- UPDATE USER SET USER_IS_PRIVATE=1 WHERE USER_ID=1;
 -- select * from USER where USER_NAME like 'us%';
 select * from USER;
+SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND
+FROM USER
+WHERE USER_NAME LIKE 'user%' 
+  AND USER_IS_PRIVATE = 0  -- Assuming 0 represents a public user
+  AND USER_IS_DEL = 0       -- Assuming 0 represents an active user
+limit 5 OFFSET 0;
 CREATE TABLE USER (
     USER_ID INT AUTO_INCREMENT,
     USER_EMAIL CHAR(64) UNIQUE,

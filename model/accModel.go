@@ -279,7 +279,7 @@ func AccDelete(id int) (err error) {
 	return err
 }
 
-func AccGetUserByName(name string) (result []entities.AccountInfExcludePrivateStatus, err error) {
+func AccGetUserByName(name string, page int) (result []entities.AccountInfExcludePrivateStatus, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -292,7 +292,8 @@ func AccGetUserByName(name string) (result []entities.AccountInfExcludePrivateSt
 	}
 	// Get info
 	name = name + "%"
-	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE '%s' AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0", name)
+	page *= 10
+	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE '%s' AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0 LIMIT 10 OFFSET %d", name, page)
 	row, err := db.Query(qr)
 	if err != nil {
 		return result, err

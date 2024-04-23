@@ -70,6 +70,7 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 	http.ServeFile(w, r, fmt.Sprintf("./avatar/%s", imgName))
 }
+
 func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
