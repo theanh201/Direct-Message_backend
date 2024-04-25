@@ -55,12 +55,12 @@ curl -X GET -F 'name=user' -F 'page=0' -F 'token=04ce9447a7cc8d61cd18d063b40bace
 curl -X GET -F 'email=user1@mail.com' -F 'token=d779737d73332c2db9e7c709019a2626970a0f162b3fa4c0fe57b88fed1d9c82' localhost:8080/get-by-email
 ```
 ## Prekey bundle stuff
+### PUT
 ``` bash
 // Update prekey bundle
 curl -X PUT -F 'ik=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933880' -F 'spk=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933881' -F 'opk=1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9,2782c5f8c4392877f28e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9,2782c5f8c4392877f28e1473ae454ae663a05a3ef5ea962c89707f7a99a429d8,1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d4,d779737d73332c2db9e7c709019a2626970a0f162b3fa4c0fe57b88fed1d9c82' -F 'token=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933886' localhost:8080/update-prekey-bundle
-
 ```
-## x3dh phase 1
+### GET
 ``` bash 
-curl -X GET -F 'user=user1@mail.com' -F 'token=7fb26648cca726f2cce63eda8e92e220684d0200f08d7076a3a4beec121af720' localhost:8080/x3dh-phase1
+curl -X GET -F 'user=user1@mail.com' -F 'token=7fb26648cca726f2cce63eda8e92e220684d0200f08d7076a3a4beec121af720' localhost:8080/get-prekey-bundle
 ```

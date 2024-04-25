@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func X3DHPhase1(w http.ResponseWriter, r *http.Request) {
+func GetPrekeyBundle(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
 	if !validToken(token) {

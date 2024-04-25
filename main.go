@@ -26,9 +26,9 @@ func main() {
 	// Search friend
 	router.HandleFunc("/get-by-name", controller.AccGetUserByName).Methods("GET")
 	router.HandleFunc("/get-by-email", controller.AccGetUserByEmail).Methods("GET")
-	// Add prekeyBundle
+	// Update and add prekeyBundle
 	router.HandleFunc("/update-prekey-bundle", controller.PrekeyBundleUpdate).Methods("PUT")
-	// Add friend phase 1
-	router.HandleFunc("/x3dh-phase1", controller.X3DHPhase1).Methods("GET")
+	// Get prekeyBundle
+	router.HandleFunc("/get-prekey-bundle", controller.GetPrekeyBundle).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
