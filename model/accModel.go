@@ -11,6 +11,7 @@ import (
 
 var Direct_Backend_DB string = "user:password1234@tcp(127.0.0.1:3306)/Direct_Backend_DB"
 
+// Write
 func AccWriteUser(username string, password string) error {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
@@ -58,7 +59,8 @@ func AccWriteUser(username string, password string) error {
 	return err
 }
 
-func AccReadUserPassword(username string) (password string, id int, err error) {
+// Get
+func AccGetUserPassword(username string) (password string, id int, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -86,6 +88,93 @@ func AccReadUserPassword(username string) (password string, id int, err error) {
 	return password, id, err
 }
 
+func AccGetInfo(id int) (info entities.AccountInfo, err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return info, err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return info, err
+	}
+	// Get info
+	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE FROM USER WHERE USER_ID=%d", id)
+	row, err := db.Query(qr)
+	if err != nil {
+		return info, err
+	}
+	defer row.Close()
+	var temp []byte
+	row.Next()
+	if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground, &temp); err != nil {
+		return info, err
+	}
+	info.UserIsPrivate = (temp[0] & 1) != 0
+	// Close
+	return info, err
+}
+
+func AccGetByName(name string, page int) (result []entities.AccountInfExcludePrivateStatus, err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return result, err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return result, err
+	}
+	// Get info
+	name = name + "%"
+	page *= 10
+	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE '%s' AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0 LIMIT 10 OFFSET %d", name, page)
+	row, err := db.Query(qr)
+	if err != nil {
+		return result, err
+	}
+	defer row.Close()
+	var info entities.AccountInfExcludePrivateStatus
+	for row.Next() {
+		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
+			return result, err
+		}
+		result = append(result, info)
+	}
+	// Close
+	return result, err
+}
+
+func AccGetByEmail(email string) (info entities.AccountInfExcludePrivateStatus, err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return info, err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return info, err
+	}
+	// Get info
+	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_EMAIL LIKE '%s' AND USER_IS_DEL = 0", email)
+	row, err := db.Query(qr)
+	if err != nil {
+		return info, err
+	}
+	defer row.Close()
+	for row.Next() {
+		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
+			return info, err
+		}
+	}
+	// Close
+	return info, err
+}
+
+// Update
 func AccUpdateEmail(id int, email string) (err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
@@ -224,34 +313,8 @@ func AccUpdatePrivateStatus(id int, status string) (err error) {
 	// Close
 	return err
 }
-func AccGetSelf(id int) (info entities.AccountInfo, err error) {
-	// Check DB
-	db, err := sql.Open("mysql", Direct_Backend_DB)
-	if err != nil {
-		return info, err
-	}
-	defer db.Close()
-	err = db.Ping()
-	if err != nil {
-		return info, err
-	}
-	// Get info
-	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE FROM USER WHERE USER_ID=%d", id)
-	row, err := db.Query(qr)
-	if err != nil {
-		return info, err
-	}
-	defer row.Close()
-	var temp []byte
-	row.Next()
-	if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground, &temp); err != nil {
-		return info, err
-	}
-	info.UserIsPrivate = (temp[0] & 1) != 0
-	// Close
-	return info, err
-}
 
+// Delete
 func AccDelete(id int) (err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
@@ -277,62 +340,4 @@ func AccDelete(id int) (err error) {
 	}
 	// Close
 	return err
-}
-
-func AccGetUserByName(name string, page int) (result []entities.AccountInfExcludePrivateStatus, err error) {
-	// Check DB
-	db, err := sql.Open("mysql", Direct_Backend_DB)
-	if err != nil {
-		return result, err
-	}
-	defer db.Close()
-	err = db.Ping()
-	if err != nil {
-		return result, err
-	}
-	// Get info
-	name = name + "%"
-	page *= 10
-	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE '%s' AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0 LIMIT 10 OFFSET %d", name, page)
-	row, err := db.Query(qr)
-	if err != nil {
-		return result, err
-	}
-	defer row.Close()
-	var info entities.AccountInfExcludePrivateStatus
-	for row.Next() {
-		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
-			return result, err
-		}
-		result = append(result, info)
-	}
-	// Close
-	return result, err
-}
-
-func AccGetUserByEmail(email string) (info entities.AccountInfExcludePrivateStatus, err error) {
-	// Check DB
-	db, err := sql.Open("mysql", Direct_Backend_DB)
-	if err != nil {
-		return info, err
-	}
-	defer db.Close()
-	err = db.Ping()
-	if err != nil {
-		return info, err
-	}
-	// Get info
-	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_EMAIL LIKE '%s' AND USER_IS_DEL = 0", email)
-	row, err := db.Query(qr)
-	if err != nil {
-		return info, err
-	}
-	defer row.Close()
-	for row.Next() {
-		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
-			return info, err
-		}
-	}
-	// Close
-	return info, err
 }

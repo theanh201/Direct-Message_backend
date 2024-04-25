@@ -76,6 +76,7 @@ func KeyBundleUpdateOpk(id int, opk []string) (err error) {
 	// Close
 	return err
 }
+
 func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
@@ -88,7 +89,7 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 		return ik, spk, opk, err
 	}
 	// Get email id
-	_, id, err := AccReadUserPassword(userEmail)
+	_, id, err := AccGetUserPassword(userEmail)
 	if err != nil {
 		return ik, spk, opk, err
 	}
@@ -128,4 +129,29 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 	}
 	defer rows.Close()
 	return ik, spk, opk, err
+}
+
+func KeyBundleGetIk(id int) (ik string, err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return ik, err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return ik, err
+	}
+	// Get Ik
+	qr := fmt.Sprintf("SELECT USER_KEY_IK FROM USER_KEY WHERE USER_ID=%d", id)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return ik, err
+	}
+	rows.Next()
+	if err := rows.Scan(&ik); err != nil {
+		return ik, err
+	}
+	// Close
+	return ik, err
 }
