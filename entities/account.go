@@ -2,7 +2,7 @@ package entities
 
 // User represents a user in the system
 type Account struct {
-	Username string `json:"username"`
+	Email    string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -12,16 +12,16 @@ type Token struct {
 }
 
 type AccountInfo struct {
-	UserEmail      string
-	UserName       string
-	UserAvatar     string
-	UserBackground string
-	UserIsPrivate  bool
+	Email      string
+	Name       string
+	Avatar     string
+	Background string
+	IsPrivate  bool
 }
 
-type AccountInfExcludePrivateStatus struct {
-	UserEmail      string
-	UserName       string
-	UserAvatar     string
-	UserBackground string
+type AccountInfoExcludePrivateStatus struct {
+	Email      string
+	Name       string
+	Avatar     string
+	Background string
 }

@@ -108,15 +108,15 @@ func AccGetInfo(id int) (info entities.AccountInfo, err error) {
 	defer row.Close()
 	var temp []byte
 	row.Next()
-	if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground, &temp); err != nil {
+	if err := row.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background, &temp); err != nil {
 		return info, err
 	}
-	info.UserIsPrivate = (temp[0] & 1) != 0
+	info.IsPrivate = (temp[0] & 1) != 0
 	// Close
 	return info, err
 }
 
-func AccGetByName(name string, page int) (result []entities.AccountInfExcludePrivateStatus, err error) {
+func AccGetByName(name string, page int) (result []entities.AccountInfoExcludePrivateStatus, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -136,9 +136,9 @@ func AccGetByName(name string, page int) (result []entities.AccountInfExcludePri
 		return result, err
 	}
 	defer row.Close()
-	var info entities.AccountInfExcludePrivateStatus
+	var info entities.AccountInfoExcludePrivateStatus
 	for row.Next() {
-		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
+		if err := row.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
 			return result, err
 		}
 		result = append(result, info)
@@ -147,7 +147,7 @@ func AccGetByName(name string, page int) (result []entities.AccountInfExcludePri
 	return result, err
 }
 
-func AccGetByEmail(email string) (info entities.AccountInfExcludePrivateStatus, err error) {
+func AccGetByEmail(email string) (info entities.AccountInfoExcludePrivateStatus, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -166,7 +166,7 @@ func AccGetByEmail(email string) (info entities.AccountInfExcludePrivateStatus, 
 	}
 	defer row.Close()
 	for row.Next() {
-		if err := row.Scan(&info.UserEmail, &info.UserName, &info.UserAvatar, &info.UserBackground); err != nil {
+		if err := row.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
 			return info, err
 		}
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 // Get
-func GetFriendRequest(id int) (friendRequest []entities.FriendRequestResponse, err error) {
+func GetFriendRequest(id int) (friendRequest []entities.FriendRequest, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -41,10 +41,10 @@ func GetFriendRequest(id int) (friendRequest []entities.FriendRequestResponse, e
 			return friendRequest, err
 		}
 		ek := hex.EncodeToString(tempEk)
-		friendRequest = append(friendRequest, entities.FriendRequestResponse{
-			RequestFrom: senderInfo,
-			RequestEk:   ek,
-			RequestIk:   ik,
+		friendRequest = append(friendRequest, entities.FriendRequest{
+			From: senderInfo,
+			Ek:   ek,
+			Ik:   ik,
 		})
 	}
 	return friendRequest, err

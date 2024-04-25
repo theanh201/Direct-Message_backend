@@ -26,7 +26,7 @@ func AccPostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Validate username
-	if !validMail(creds.Username) {
+	if !validMail(creds.Email) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
@@ -36,7 +36,7 @@ func AccPostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Compare password
-	password, id, err := model.AccGetUserPassword(creds.Username)
+	password, id, err := model.AccGetUserPassword(creds.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -67,7 +67,7 @@ func AccPostRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Validate username
-	if !validMail(creds.Username) {
+	if !validMail(creds.Email) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
@@ -77,14 +77,14 @@ func AccPostRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Check if user already exsist
-	_, id, _ := model.AccGetUserPassword(creds.Username)
+	_, id, _ := model.AccGetUserPassword(creds.Email)
 	if id != -1 {
 		response := map[string]string{"message": "Username already exsist"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 	// Add user and response
-	err = model.AccWriteUser(creds.Username, creds.Password)
+	err = model.AccWriteUser(creds.Email, creds.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -150,7 +150,7 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if info.UserIsPrivate {
+	if info.IsPrivate {
 		http.Error(w, "User is private", http.StatusUnauthorized)
 		return
 	}
@@ -256,7 +256,7 @@ func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if info.UserIsPrivate {
+	if info.IsPrivate {
 		http.Error(w, "User is private", http.StatusUnauthorized)
 		return
 	}
