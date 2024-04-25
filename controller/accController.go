@@ -31,7 +31,7 @@ func AccPostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Validate password
-	if !validToken(creds.Password) {
+	if !valid32Byte(creds.Password) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
@@ -72,7 +72,7 @@ func AccPostRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Validate password
-	if !validToken(creds.Password) {
+	if !valid32Byte(creds.Password) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
@@ -84,7 +84,7 @@ func AccPostRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Add user and response
-	err = model.AccWriteUser(creds.Email, creds.Password)
+	err = model.AccAddUser(creds.Email, creds.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -97,7 +97,7 @@ func AccPostRegister(w http.ResponseWriter, r *http.Request) {
 func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -122,7 +122,7 @@ func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -160,7 +160,7 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -199,7 +199,7 @@ func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
 func AccGetUserByEmail(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -228,7 +228,7 @@ func AccGetUserByEmail(w http.ResponseWriter, r *http.Request) {
 func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -274,7 +274,7 @@ func AccPutAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -334,7 +334,7 @@ func AccPutBackground(w http.ResponseWriter, r *http.Request) {
 	}
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -387,7 +387,7 @@ func AccPutBackground(w http.ResponseWriter, r *http.Request) {
 func AccPutEmail(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -419,7 +419,7 @@ func AccPutEmail(w http.ResponseWriter, r *http.Request) {
 func AccPutPassword(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -451,7 +451,7 @@ func AccPutPassword(w http.ResponseWriter, r *http.Request) {
 func AccPutName(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -483,7 +483,7 @@ func AccPutName(w http.ResponseWriter, r *http.Request) {
 func AccPutPrivateStatus(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
@@ -517,7 +517,7 @@ func AccPutPrivateStatus(w http.ResponseWriter, r *http.Request) {
 func AccDeleteSelf(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}

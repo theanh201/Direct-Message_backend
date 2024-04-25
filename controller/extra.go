@@ -13,9 +13,11 @@ func validMail(s string) bool {
 	_, err := mail.ParseAddress(s)
 	return err == nil
 }
-func validToken(s string) bool {
+
+func valid32Byte(s string) bool {
 	return len(s) == 64
 }
+
 func generateSecureRandomString(length int) string {
 	bytes := make([]byte, length)
 	rand.Read(bytes)

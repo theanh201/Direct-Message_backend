@@ -12,7 +12,7 @@ import (
 func PrekeyBundleGet(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusBadRequest)
 		return
 	}
@@ -43,7 +43,7 @@ func PrekeyBundleGet(w http.ResponseWriter, r *http.Request) {
 func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	token := r.FormValue("token")
-	if !validToken(token) {
+	if !valid32Byte(token) {
 		http.Error(w, "Invalid token", http.StatusBadRequest)
 		return
 	}
@@ -57,7 +57,7 @@ func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 	}
 	// Update IK
 	ik := r.FormValue("ik")
-	if !validToken(ik) {
+	if !valid32Byte(ik) {
 		http.Error(w, "Invalid ik", http.StatusBadRequest)
 		return
 	}
@@ -68,7 +68,7 @@ func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 	}
 	// Update SPK
 	spk := r.FormValue("spk")
-	if !validToken(ik) {
+	if !valid32Byte(ik) {
 		http.Error(w, "Invalid spk", http.StatusBadRequest)
 		return
 	}
@@ -80,7 +80,7 @@ func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 	// Update OPK
 	opk := strings.Split(r.FormValue("opk"), ",")
 	for _, val := range opk {
-		if !validToken(val) {
+		if !valid32Byte(val) {
 			http.Error(w, "Invalid opk", http.StatusBadRequest)
 			return
 		}

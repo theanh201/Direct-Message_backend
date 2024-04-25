@@ -32,7 +32,7 @@ func main() {
 	router.HandleFunc("/get-prekey-bundle", controller.PrekeyBundleGet).Methods("GET")
 	router.HandleFunc("/update-prekey-bundle", controller.PrekeyBundlePut).Methods("PUT")
 	// Add Friend Request
-	// router.HandleFunc("/add-friend-request", controller.FriendRequestPost).Methods("POST")
+	router.HandleFunc("/add-friend-request", controller.FriendRequestPost).Methods("POST")
 	// Get friendRequest
 	router.HandleFunc("/get-friend-request", controller.FriendRequestGet).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))

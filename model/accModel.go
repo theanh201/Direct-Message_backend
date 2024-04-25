@@ -11,8 +11,8 @@ import (
 
 var Direct_Backend_DB string = "user:password1234@tcp(127.0.0.1:3306)/Direct_Backend_DB"
 
-// Write
-func AccWriteUser(username string, password string) error {
+// Add
+func AccAddUser(email string, password string) error {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -24,13 +24,13 @@ func AccWriteUser(username string, password string) error {
 		return err
 	}
 	// Add username and password to DB
-	qr := fmt.Sprintf("INSERT INTO USER(USER_EMAIL, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES ('%s', x'%s', '%s', '', '', 0, 0)", username, password, username)
+	qr := fmt.Sprintf("INSERT INTO USER(USER_EMAIL, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES ('%s', x'%s', '%s', '', '', 0, 0)", email, password, email)
 	_, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
 	// Read  ID
-	qr = fmt.Sprintf("SELECT USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0", username)
+	qr = fmt.Sprintf("SELECT USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0", email)
 	rows, err := db.Query(qr)
 	if err != nil {
 		return err
@@ -55,12 +55,11 @@ func AccWriteUser(username string, password string) error {
 			return err
 		}
 	}
-	// Close
 	return err
 }
 
 // Get
-func AccGetUserPassword(username string) (password string, id int, err error) {
+func AccGetUserPassword(email string) (password string, id int, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -72,7 +71,7 @@ func AccGetUserPassword(username string) (password string, id int, err error) {
 		return "", -1, err
 	}
 	// Read Password and ID
-	qr := fmt.Sprintf("SELECT USER_PASSWORD, USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0", username)
+	qr := fmt.Sprintf("SELECT USER_PASSWORD, USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0", email)
 	rows, err := db.Query(qr)
 	if err != nil {
 		return "", -1, err
@@ -84,7 +83,6 @@ func AccGetUserPassword(username string) (password string, id int, err error) {
 		return "", -1, err
 	}
 	password = hex.EncodeToString(dbPassword)
-	// Close
 	return password, id, err
 }
 
@@ -112,7 +110,6 @@ func AccGetInfo(id int) (info entities.AccountInfo, err error) {
 		return info, err
 	}
 	info.IsPrivate = (temp[0] & 1) != 0
-	// Close
 	return info, err
 }
 
@@ -143,7 +140,6 @@ func AccGetByName(name string, page int) (result []entities.AccountInfoExcludePr
 		}
 		result = append(result, info)
 	}
-	// Close
 	return result, err
 }
 
@@ -170,7 +166,6 @@ func AccGetByEmail(email string) (info entities.AccountInfoExcludePrivateStatus,
 			return info, err
 		}
 	}
-	// Close
 	return info, err
 }
 
@@ -195,10 +190,6 @@ func AccUpdateEmail(id int, email string) (err error) {
 	// Revoke token
 	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
 	_, err = db.Query(qr)
-	if err != nil {
-		return err
-	}
-	// Close
 	return err
 }
 
@@ -222,10 +213,6 @@ func AccUpdatePassword(id int, password string) (err error) {
 	// Revoke token
 	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
 	_, err = db.Query(qr)
-	if err != nil {
-		return err
-	}
-	// Close
 	return err
 }
 
@@ -243,11 +230,6 @@ func AccUpdateName(id int, name string) (err error) {
 	// Update name
 	qr := fmt.Sprintf("UPDATE USER SET USER_NAME='%s' WHERE USER_ID=%d", name, id)
 	_, err = db.Query(qr)
-	if err != nil {
-		return err
-	}
-	// Close
-	defer db.Close()
 	return err
 }
 
@@ -265,10 +247,6 @@ func AccUpdateAvatar(id int, avatar string) (err error) {
 	// Update avatar
 	qr := fmt.Sprintf("UPDATE USER SET USER_AVATAR='%s' WHERE USER_ID=%d", avatar, id)
 	_, err = db.Query(qr)
-	if err != nil {
-		return err
-	}
-	// Close
 	return err
 }
 
@@ -286,10 +264,6 @@ func AccUpdateBackground(id int, avatar string) (err error) {
 	// Update background
 	qr := fmt.Sprintf("UPDATE USER SET USER_BACKGROUND='%s' WHERE USER_ID=%d", avatar, id)
 	_, err = db.Query(qr)
-	if err != nil {
-		return err
-	}
-	// Close
 	return err
 }
 
@@ -307,10 +281,6 @@ func AccUpdatePrivateStatus(id int, status string) (err error) {
 	// Update private status
 	qr := fmt.Sprintf("UPDATE USER SET USER_IS_PRIVATE=%s WHERE USER_ID=%d", status, id)
 	_, err = db.Query(qr)
-	if err != nil {
-		return err
-	}
-	// Close
 	return err
 }
 
@@ -335,9 +305,5 @@ func AccDelete(id int) (err error) {
 	// Revoke token
 	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
 	_, err = db.Query(qr)
-	if err != nil {
-		return err
-	}
-	// Close
 	return err
 }

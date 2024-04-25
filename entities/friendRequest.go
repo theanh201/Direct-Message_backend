@@ -1,7 +1,8 @@
 package entities
 
 type FriendRequest struct {
-	From AccountInfo
-	Ek   string
-	Ik   string
+	From    AccountInfo
+	Ek      string
+	Ik      string
+	OpkUsed string
 }
