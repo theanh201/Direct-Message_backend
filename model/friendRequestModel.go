@@ -19,7 +19,28 @@ func FriendRequestAdd(fromId int, toId int, ek string, opkUsed string) (err erro
 	if err != nil {
 		return err
 	}
-	qr := fmt.Sprintf("INSERT INTO USER_FRIEND_REQUEST (USER_ID_FROM, USER_ID_TO, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK, USER_FRIEND_REQUEST_REJECTED) VALUES(%d, %d, x'%s', x'%s', 0)", fromId, toId, ek, opkUsed)
+	qr := fmt.Sprintf("INSERT INTO USER_FRIEND_REQUEST (USER_ID_FROM, USER_ID_TO, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK, USER_FRIEND_REQUEST_IS_DEL) VALUES(%d, %d, x'%s', x'%s', 0)", fromId, toId, ek, opkUsed)
+	_, err = db.Query(qr)
+	return err
+}
+
+// Update
+func FriendRequestUpdateReject(email string, id int) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	_, id2, err := AccGetUserPassword(email)
+	if err != nil {
+		return err
+	}
+	qr := fmt.Sprintf("UPDATE USER_FRIEND_REQUEST SET USER_FRIEND_REQUEST_IS_DEL=1 WHERE USER_ID_TO=%d AND USER_ID_FROM=%d", id, id2)
 	_, err = db.Query(qr)
 	return err
 }
@@ -37,7 +58,7 @@ func FriendRequestGet(id int) (friendRequest []entities.FriendRequest, err error
 		return friendRequest, err
 	}
 	// Get all friend request
-	qr := fmt.Sprintf("SELECT USER_ID_FROM, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK FROM USER_FRIEND_REQUEST WHERE USER_ID_TO=%d AND USER_FRIEND_REQUEST_REJECTED=0", id)
+	qr := fmt.Sprintf("SELECT USER_ID_FROM, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK FROM USER_FRIEND_REQUEST WHERE USER_ID_TO=%d AND USER_FRIEND_REQUEST_IS_DEL=0", id)
 	row, err := db.Query(qr)
 	if err != nil {
 		return friendRequest, err

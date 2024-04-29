@@ -61,11 +61,12 @@ curl -X PUT -F 'ik=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933
 ```
 ### POST
 ``` bash
-curl -X POST -F 'toEmail=user1@mail.com' -F'ek=7fb26648cca726f2cce63eda8e92e220684d0200f08d7076a3a4beec121af720' -F 'opkUsed=1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d4' -F 'token=00d503b3182fc87818e47bb500f5ff4e30faada4544dfd3bd060acd36fd9b622' localhost:8080/add-friend-request
-curl -X POST -F 'email=user2@mail.com' -F 'token=5c5af6c9131c4d255a8402eb818a6a3625b88f498de87eabdaf2506dd251b483' localhost:8080/accept-friend-request
+curl -X POST -F 'toEmail=user1@mail.com' -F'ek=7fb26648cca726f2cce63eda8e92e220684d0200f08d7076a3a4beec121af720' -F 'opkUsed=1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d4' -F 'token=95b1abaa7f1b1ec063007fed21ed57b9ddb93297dc2936cd5e21c329b886ffda' localhost:8080/add-friend-request
+curl -X POST -F 'email=user2@mail.com' -F 'token=95d0678e0e865f55d967d16f5cea6c4d15922594a72a2fb3ee2c0b1f22859647' localhost:8080/accept-friend-request
+curl -X POST -F 'email=user2@mail.com' -F 'token=95d0678e0e865f55d967d16f5cea6c4d15922594a72a2fb3ee2c0b1f22859647' localhost:8080/reject-friend-request
 ```
 ### GET
 ``` bash 
-curl -X GET -F 'email=user1@mail.com' -F 'token=00d503b3182fc87818e47bb500f5ff4e30faada4544dfd3bd060acd36fd9b622' localhost:8080/get-prekey-bundle
-curl -X GET -F 'token=5c5af6c9131c4d255a8402eb818a6a3625b88f498de87eabdaf2506dd251b483' localhost:8080/get-friend-request
+curl -X GET -F 'email=user1@mail.com' -F 'token=95b1abaa7f1b1ec063007fed21ed57b9ddb93297dc2936cd5e21c329b886ffda' localhost:8080/get-prekey-bundle
+curl -X GET -F 'token=95d0678e0e865f55d967d16f5cea6c4d15922594a72a2fb3ee2c0b1f22859647' localhost:8080/get-friend-request
 ```
