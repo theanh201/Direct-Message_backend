@@ -19,7 +19,11 @@ func KeyBundleUpdateIk(id int, ik string) (err error) {
 	}
 	// Update Ik
 	qr := fmt.Sprintf("UPDATE USER_KEY SET USER_KEY_IK = x'%s' WHERE USER_ID=%d", ik, id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -36,7 +40,11 @@ func KeyBundleUpdateSpk(id int, spk string) (err error) {
 	}
 	// Update Spk
 	qr := fmt.Sprintf("UPDATE USER_KEY SET USER_KEY_SPK = x'%s' WHERE USER_ID=%d", spk, id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -53,17 +61,22 @@ func KeyBundleUpdateOpk(id int, opk []string) (err error) {
 	}
 	// Remove old opk
 	qr := fmt.Sprintf("DELETE FROM USER_OPK_KEY WHERE USER_ID=%d", id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	if err != nil {
 		return err
 	}
 	// Add new opk
 	for _, key := range opk {
 		qr := fmt.Sprintf("INSERT INTO USER_OPK_KEY(USER_ID, USER_OPK_KEY, USER_OPK_KEY_IS_DEL) VALUES (%d, x'%s', 0)", id, key)
-		_, err = db.Query(qr)
+		rows, err := db.Query(qr)
 		if err != nil {
 			return err
 		}
+		defer rows.Close()
 	}
 	return err
 }
@@ -105,6 +118,7 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 	if err != nil {
 		return ik, spk, opk, err
 	}
+	defer rows.Close()
 	var opkByte []byte
 	rows.Next()
 	if err := rows.Scan(&opkByte); err != nil {
@@ -113,7 +127,11 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 	opk = hex.EncodeToString(opkByte)
 	// Mark opk as IS_DEL
 	qr = fmt.Sprintf("UPDATE USER_OPK_KEY SET USER_OPK_KEY_IS_DEL=1 WHERE USER_ID=%d AND USER_OPK_KEY=x'%s'", id, opk)
-	_, err = db.Query(qr)
+	rows, err = db.Query(qr)
+	if err != nil {
+		return ik, spk, opk, err
+	}
+	defer rows.Close()
 	return ik, spk, opk, err
 }
 
@@ -134,6 +152,7 @@ func KeyBundleGetIk(id int) (ik string, err error) {
 	if err != nil {
 		return ik, err
 	}
+	defer rows.Close()
 	rows.Next()
 	err = rows.Scan(&ik)
 	return ik, err

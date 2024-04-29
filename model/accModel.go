@@ -25,10 +25,11 @@ func AccAddUser(email string, password string) error {
 	}
 	// Add username and password to DB
 	qr := fmt.Sprintf("INSERT INTO USER(USER_EMAIL, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES ('%s', x'%s', '%s', '', '', 0, 0)", email, password, email)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 	// Read  ID
 	_, id, err := AccGetUserPassword(email)
 	if err != nil {
@@ -36,17 +37,19 @@ func AccAddUser(email string, password string) error {
 	}
 	// Create empty ik spk
 	qr = fmt.Sprintf("INSERT INTO USER_KEY(USER_ID, USER_KEY_IK, USER_KEY_SPK) VALUES (%d, '', '')", id)
-	_, err = db.Query(qr)
+	rows, err = db.Query(qr)
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 	// Create 5 opk
 	for i := 0; i < 5; i++ {
 		qr = fmt.Sprintf("INSERT INTO USER_OPK_KEY(USER_ID, USER_OPK_KEY, USER_OPK_KEY_IS_DEL) VALUES (%d, '%d', 0)", id, i)
-		_, err = db.Query(qr)
+		rows, err = db.Query(qr)
 		if err != nil {
 			return err
 		}
+		defer rows.Close()
 	}
 	return err
 }
@@ -92,14 +95,14 @@ func AccGetInfo(id int) (info entities.AccountInfo, err error) {
 	}
 	// Get info
 	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE FROM USER WHERE USER_ID=%d", id)
-	row, err := db.Query(qr)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return info, err
 	}
-	defer row.Close()
+	defer rows.Close()
 	var temp []byte
-	row.Next()
-	if err := row.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background, &temp); err != nil {
+	rows.Next()
+	if err := rows.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background, &temp); err != nil {
 		return info, err
 	}
 	info.IsPrivate = (temp[0] & 1) != 0
@@ -121,14 +124,14 @@ func AccGetByName(name string, page int) (result []entities.AccountInfoExcludePr
 	name = name + "%"
 	page *= 10
 	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE '%s' AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0 LIMIT 10 OFFSET %d", name, page)
-	row, err := db.Query(qr)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return result, err
 	}
-	defer row.Close()
+	defer rows.Close()
 	var info entities.AccountInfoExcludePrivateStatus
-	for row.Next() {
-		if err := row.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
+	for rows.Next() {
+		if err := rows.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
 			return result, err
 		}
 		result = append(result, info)
@@ -149,13 +152,13 @@ func AccGetByEmail(email string) (info entities.AccountInfoExcludePrivateStatus,
 	}
 	// Get info
 	qr := fmt.Sprintf("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_EMAIL LIKE '%s' AND USER_IS_DEL = 0", email)
-	row, err := db.Query(qr)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return info, err
 	}
-	defer row.Close()
-	for row.Next() {
-		if err := row.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
+	defer rows.Close()
+	for rows.Next() {
+		if err := rows.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
 			return info, err
 		}
 	}
@@ -176,13 +179,18 @@ func AccUpdateEmail(id int, email string) (err error) {
 	}
 	// Update Email
 	qr := fmt.Sprintf("UPDATE USER SET USER_EMAIL='%s' WHERE USER_ID=%d", email, id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 	// Revoke token
 	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
-	_, err = db.Query(qr)
+	rows, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -199,13 +207,18 @@ func AccUpdatePassword(id int, password string) (err error) {
 	}
 	// Update password
 	qr := fmt.Sprintf("UPDATE USER SET USER_PASSWORD=x'%s' WHERE USER_ID=%d", password, id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 	// Revoke token
 	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
-	_, err = db.Query(qr)
+	rows, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -222,7 +235,11 @@ func AccUpdateName(id int, name string) (err error) {
 	}
 	// Update name
 	qr := fmt.Sprintf("UPDATE USER SET USER_NAME='%s' WHERE USER_ID=%d", name, id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -239,7 +256,11 @@ func AccUpdateAvatar(id int, avatar string) (err error) {
 	}
 	// Update avatar
 	qr := fmt.Sprintf("UPDATE USER SET USER_AVATAR='%s' WHERE USER_ID=%d", avatar, id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -256,7 +277,11 @@ func AccUpdateBackground(id int, avatar string) (err error) {
 	}
 	// Update background
 	qr := fmt.Sprintf("UPDATE USER SET USER_BACKGROUND='%s' WHERE USER_ID=%d", avatar, id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -273,7 +298,11 @@ func AccUpdatePrivateStatus(id int, status string) (err error) {
 	}
 	// Update private status
 	qr := fmt.Sprintf("UPDATE USER SET USER_IS_PRIVATE=%s WHERE USER_ID=%d", status, id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -291,12 +320,17 @@ func AccDelete(id int) (err error) {
 	}
 	// Update delete status
 	qr := fmt.Sprintf("UPDATE USER SET USER_IS_DEL=1 WHERE USER_ID=%d", id)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 	// Revoke token
 	qr = fmt.Sprintf("UPDATE USER_TOKEN SET USER_TOKEN_IS_DEL=1 WHERE USER_ID=%d", id)
-	_, err = db.Query(qr)
+	rows, err = db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }

@@ -20,7 +20,11 @@ func FriendRequestAdd(fromId int, toId int, ek string, opkUsed string) (err erro
 		return err
 	}
 	qr := fmt.Sprintf("INSERT INTO USER_FRIEND_REQUEST (USER_ID_FROM, USER_ID_TO, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK, USER_FRIEND_REQUEST_IS_DEL) VALUES(%d, %d, x'%s', x'%s', 0)", fromId, toId, ek, opkUsed)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -41,7 +45,11 @@ func FriendRequestUpdateReject(email string, id int) (err error) {
 		return err
 	}
 	qr := fmt.Sprintf("UPDATE USER_FRIEND_REQUEST SET USER_FRIEND_REQUEST_IS_DEL=1 WHERE USER_ID_TO=%d AND USER_ID_FROM=%d", id, id2)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -59,16 +67,16 @@ func FriendRequestGet(id int) (friendRequest []entities.FriendRequest, err error
 	}
 	// Get all friend request
 	qr := fmt.Sprintf("SELECT USER_ID_FROM, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK FROM USER_FRIEND_REQUEST WHERE USER_ID_TO=%d AND USER_FRIEND_REQUEST_IS_DEL=0", id)
-	row, err := db.Query(qr)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return friendRequest, err
 	}
-	defer row.Close()
-	for row.Next() {
+	defer rows.Close()
+	for rows.Next() {
 		var tempId int
 		var tempEk []byte
 		var tempOpk []byte
-		if err := row.Scan(&tempId, &tempEk, &tempOpk); err != nil {
+		if err := rows.Scan(&tempId, &tempEk, &tempOpk); err != nil {
 			return friendRequest, err
 		}
 		senderInfo, err := AccGetInfo(tempId)

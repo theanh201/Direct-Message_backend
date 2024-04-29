@@ -11,7 +11,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com
 ### PUT
 ``` bash
 // Update avatar
-curl -X PUT -F 'avatar=@/home/admin/MEGA/Pictures/Wallpapers/windowChan.jpg' -F 'token=f3d16053e5ddcd02b1c21a1543163e603f73c51bfdc5c6ba916e00ea257625fa' localhost:8080/update-avatar
+curl -X PUT -F 'avatar=@/home/admin/MEGA/Pictures/Wallpapers/windowChan.jpg' -F 'token=5cca2f977dc8cd9867e89d25eef2a33363d06cb2cf8db58fc5547e8a0f1fed20' localhost:8080/update-avatar
 
 // Update background
 curl -X PUT -F 'background=@/home/admin/MEGA/Pictures/Wallpapers/windowChan.jpg' -F 'token=f3d16053e5ddcd02b1c21a1543163e603f73c51bfdc5c6ba916e00ea257625fa' localhost:8080/update-background

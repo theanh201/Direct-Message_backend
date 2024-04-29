@@ -21,7 +21,11 @@ func UserTokenAddToDB(id int, token string, timeout string) error {
 	}
 	// Add to db
 	qr := fmt.Sprintf("INSERT INTO USER_TOKEN(USER_TOKEN, USER_ID, USER_TOKEN_TIMEOUT, USER_TOKEN_IS_DEL) VALUES(x'%s', %d, '%s', 0)", token, id, timeout)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
 
@@ -42,6 +46,7 @@ func UserTokenValidate(token string) (valid bool, id int, err error) {
 	if err != nil {
 		return false, -1, err
 	}
+	defer rows.Close()
 	// Decode timeout
 	var timeout string
 	rows.Next()

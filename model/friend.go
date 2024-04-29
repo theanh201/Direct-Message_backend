@@ -30,6 +30,10 @@ func FriendAdd(email string, id int) (err error) {
 		return fmt.Errorf("you cannot make friend with your self")
 	}
 	qr := fmt.Sprintf("INSERT INTO USER_FRIEND (USER_ID_1, USER_ID_2, USER_FRIEND_SINCE, USER_FRIEND_IS_DEL) VALUES(%d, %d, '%s', 0)", id, id2, now)
-	_, err = db.Query(qr)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	return err
 }
