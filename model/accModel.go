@@ -30,15 +30,8 @@ func AccAddUser(email string, password string) error {
 		return err
 	}
 	// Read  ID
-	qr = fmt.Sprintf("SELECT USER_ID FROM USER WHERE USER_EMAIL='%s' AND USER_IS_DEL = 0", email)
-	rows, err := db.Query(qr)
+	_, id, err := AccGetUserPassword(email)
 	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	var id int
-	rows.Next()
-	if err := rows.Scan(&id); err != nil {
 		return err
 	}
 	// Create empty ik spk
