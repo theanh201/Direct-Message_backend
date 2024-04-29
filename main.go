@@ -35,5 +35,7 @@ func main() {
 	router.HandleFunc("/add-friend-request", controller.FriendRequestPost).Methods("POST")
 	// Get friendRequest
 	router.HandleFunc("/get-friend-request", controller.FriendRequestGet).Methods("GET")
+	// Accect friend request
+	router.HandleFunc("/accept-friend-request", controller.FriendRequestPostAccept).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

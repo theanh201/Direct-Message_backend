@@ -57,14 +57,15 @@ curl -X GET -F 'email=user2@mail.com' -F 'token=8bceb11f5c2f037b7a2320dd27f1d656
 ### PUT
 ``` bash
 // Update prekey bundle
-curl -X PUT -F 'ik=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933880' -F 'spk=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933881' -F 'opk=1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9,2782c5f8c4392877f28e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9,2782c5f8c4392877f28e1473ae454ae663a05a3ef5ea962c89707f7a99a429d8,1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d4,d779737d73332c2db9e7c709019a2626970a0f162b3fa4c0fe57b88fed1d9c82' -F 'token=4dc9db307aa1d39f1ba3c81fbfca466a0e6b0fe8379c984b5ddde205118890dd' localhost:8080/update-prekey-bundle
+curl -X PUT -F 'ik=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933880' -F 'spk=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933881' -F 'opk=1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9,2782c5f8c4392877f28e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9,2782c5f8c4392877f28e1473ae454ae663a05a3ef5ea962c89707f7a99a429d8,1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d4,d779737d73332c2db9e7c709019a2626970a0f162b3fa4c0fe57b88fed1d9c82' -F 'token=5c5af6c9131c4d255a8402eb818a6a3625b88f498de87eabdaf2506dd251b483' localhost:8080/update-prekey-bundle
 ```
 ### POST
 ``` bash
-curl -X POST -F 'toEmail=user1@mail.com' -F'ek=7fb26648cca726f2cce63eda8e92e220684d0200f08d7076a3a4beec121af720' -F 'opkUsed=1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9' -F 'token=4dc9db307aa1d39f1ba3c81fbfca466a0e6b0fe8379c984b5ddde205118890dd' localhost:8080/add-friend-request
+curl -X POST -F 'toEmail=user1@mail.com' -F'ek=7fb26648cca726f2cce63eda8e92e220684d0200f08d7076a3a4beec121af720' -F 'opkUsed=1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d4' -F 'token=00d503b3182fc87818e47bb500f5ff4e30faada4544dfd3bd060acd36fd9b622' localhost:8080/add-friend-request
+curl -X POST -F 'email=user2@mail.com' -F 'token=5c5af6c9131c4d255a8402eb818a6a3625b88f498de87eabdaf2506dd251b483' localhost:8080/accept-friend-request
 ```
 ### GET
 ``` bash 
-curl -X GET -F 'email=user1@mail.com' -F 'token=4dc9db307aa1d39f1ba3c81fbfca466a0e6b0fe8379c984b5ddde205118890dd' localhost:8080/get-prekey-bundle
-curl -X GET -F 'token=cfc60c7dc2df6ca3abc61fc812e0df19d6c77c4636b517a707fa7bfcf62ed972' localhost:8080/get-friend-request
+curl -X GET -F 'email=user1@mail.com' -F 'token=00d503b3182fc87818e47bb500f5ff4e30faada4544dfd3bd060acd36fd9b622' localhost:8080/get-prekey-bundle
+curl -X GET -F 'token=5c5af6c9131c4d255a8402eb818a6a3625b88f498de87eabdaf2506dd251b483' localhost:8080/get-friend-request
 ```
