@@ -82,7 +82,8 @@ func MessageGetContentPermission(contentName string) (idFrom int, idTo int, err 
 	if err != nil {
 		return idFrom, idTo, err
 	}
-	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO FROM MESSAGE WHERE MESSAGE_CONTENT=?", contentName)
+	qr := fmt.Sprintf("SELECT USER_ID_FROM, USER_ID_TO FROM MESSAGE WHERE MESSAGE_CONTENT=%s", contentName)
+	rows, err := db.Query(qr)
 	if err != nil {
 		return idFrom, idTo, err
 	}
