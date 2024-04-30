@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"DirectBackend/model"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"net/mail"
 )
 
@@ -16,12 +18,32 @@ func validMail(s string) bool {
 	return err == nil
 }
 
-func valid32Byte(s string) bool {
-	return len(s) == 64
-}
-
 func generateSecureRandomString(length int) string {
 	bytes := make([]byte, length)
 	rand.Read(bytes)
 	return hex.EncodeToString(bytes)
+}
+func validateToken(token string) (id int, err error) {
+	if len(token) != 64 {
+		return id, fmt.Errorf("token not 32 byte")
+	}
+	tokenByte, err := hex.DecodeString(token)
+	if err != nil {
+		return id, err
+	}
+	id, err = model.UserTokenValidate(tokenByte)
+	if err != nil {
+		return id, err
+	}
+	return id, err
+}
+func convert32Byte(key string) (keyByte []byte, err error) {
+	if len(key) != 64 {
+		return keyByte, fmt.Errorf("token not 32 byte")
+	}
+	keyByte, err = hex.DecodeString(key)
+	if err != nil {
+		return keyByte, err
+	}
+	return keyByte, err
 }

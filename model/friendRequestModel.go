@@ -4,11 +4,10 @@ import (
 	"DirectBackend/entities"
 	"database/sql"
 	"encoding/hex"
-	"fmt"
 )
 
 // Add
-func FriendRequestAdd(fromId int, toId int, ek string, opkUsed string) (err error) {
+func FriendRequestAdd(fromId int, toId int, ek []byte, opkUsed []byte) (err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -19,8 +18,7 @@ func FriendRequestAdd(fromId int, toId int, ek string, opkUsed string) (err erro
 	if err != nil {
 		return err
 	}
-	qr := fmt.Sprintf("INSERT INTO USER_FRIEND_REQUEST (USER_ID_FROM, USER_ID_TO, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK, USER_FRIEND_REQUEST_IS_DEL) VALUES(%d, %d, x'%s', x'%s', 0)", fromId, toId, ek, opkUsed)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("INSERT INTO USER_FRIEND_REQUEST (USER_ID_FROM, USER_ID_TO, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK, USER_FRIEND_REQUEST_IS_DEL) VALUES(?, ?, ?, ?, 0)", fromId, toId, ek, opkUsed)
 	if err != nil {
 		return err
 	}
@@ -44,8 +42,7 @@ func FriendRequestUpdateReject(email string, id int) (err error) {
 	if err != nil {
 		return err
 	}
-	qr := fmt.Sprintf("UPDATE USER_FRIEND_REQUEST SET USER_FRIEND_REQUEST_IS_DEL=1 WHERE USER_ID_TO=%d AND USER_ID_FROM=%d", id, id2)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("UPDATE USER_FRIEND_REQUEST SET USER_FRIEND_REQUEST_IS_DEL=1 WHERE USER_ID_TO=? AND USER_ID_FROM=?", id, id2)
 	if err != nil {
 		return err
 	}
@@ -66,8 +63,7 @@ func FriendRequestGet(id int) (friendRequest []entities.FriendRequest, err error
 		return friendRequest, err
 	}
 	// Get all friend request
-	qr := fmt.Sprintf("SELECT USER_ID_FROM, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK FROM USER_FRIEND_REQUEST WHERE USER_ID_TO=%d AND USER_FRIEND_REQUEST_IS_DEL=0", id)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("SELECT USER_ID_FROM, USER_FRIEND_REQUEST_EK, USER_FRIEND_REQUEST_OPK FROM USER_FRIEND_REQUEST WHERE USER_ID_TO=? AND USER_FRIEND_REQUEST_IS_DEL=0", id)
 	if err != nil {
 		return friendRequest, err
 	}

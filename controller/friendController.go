@@ -8,19 +8,12 @@ import (
 
 func FriendGet(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// Get friend list
 	firendList, err := model.FriendGet(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

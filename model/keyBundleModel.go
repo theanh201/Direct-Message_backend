@@ -3,10 +3,9 @@ package model
 import (
 	"database/sql"
 	"encoding/hex"
-	"fmt"
 )
 
-func KeyBundleUpdateIk(id int, ik string) (err error) {
+func KeyBundleUpdateIk(id int, ik []byte) (err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -18,8 +17,7 @@ func KeyBundleUpdateIk(id int, ik string) (err error) {
 		return err
 	}
 	// Update Ik
-	qr := fmt.Sprintf("UPDATE USER_KEY SET USER_KEY_IK = x'%s' WHERE USER_ID=%d", ik, id)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("UPDATE USER_KEY SET USER_KEY_IK=? WHERE USER_ID=?", ik, id)
 	if err != nil {
 		return err
 	}
@@ -27,7 +25,7 @@ func KeyBundleUpdateIk(id int, ik string) (err error) {
 	return err
 }
 
-func KeyBundleUpdateSpk(id int, spk string) (err error) {
+func KeyBundleUpdateSpk(id int, spk []byte) (err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -39,8 +37,7 @@ func KeyBundleUpdateSpk(id int, spk string) (err error) {
 		return err
 	}
 	// Update Spk
-	qr := fmt.Sprintf("UPDATE USER_KEY SET USER_KEY_SPK = x'%s' WHERE USER_ID=%d", spk, id)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("UPDATE USER_KEY SET USER_KEY_SPK=? WHERE USER_ID=?", spk, id)
 	if err != nil {
 		return err
 	}
@@ -48,7 +45,7 @@ func KeyBundleUpdateSpk(id int, spk string) (err error) {
 	return err
 }
 
-func KeyBundleUpdateOpk(id int, opk []string) (err error) {
+func KeyBundleUpdateOpk(id int, opk [][]byte) (err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -60,8 +57,7 @@ func KeyBundleUpdateOpk(id int, opk []string) (err error) {
 		return err
 	}
 	// Remove old opk
-	qr := fmt.Sprintf("DELETE FROM USER_OPK_KEY WHERE USER_ID=%d", id)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("DELETE FROM USER_OPK_KEY WHERE USER_ID=?", id)
 	if err != nil {
 		return err
 	}
@@ -71,8 +67,7 @@ func KeyBundleUpdateOpk(id int, opk []string) (err error) {
 	}
 	// Add new opk
 	for _, key := range opk {
-		qr := fmt.Sprintf("INSERT INTO USER_OPK_KEY(USER_ID, USER_OPK_KEY, USER_OPK_KEY_IS_DEL) VALUES (%d, x'%s', 0)", id, key)
-		rows, err := db.Query(qr)
+		rows, err := db.Query("INSERT INTO USER_OPK_KEY(USER_ID, USER_OPK_KEY, USER_OPK_KEY_IS_DEL) VALUES (?, ?, 0)", id, key)
 		if err != nil {
 			return err
 		}
@@ -98,8 +93,7 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 		return ik, spk, opk, err
 	}
 	// Get ik, spk
-	qr := fmt.Sprintf("SELECT USER_KEY_IK, USER_KEY_SPK FROM USER_KEY WHERE USER_ID=%d", id)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("SELECT USER_KEY_IK, USER_KEY_SPK FROM USER_KEY WHERE USER_ID=?", id)
 	if err != nil {
 		return ik, spk, opk, err
 	}
@@ -113,8 +107,7 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 	ik = hex.EncodeToString(ikByte)
 	spk = hex.EncodeToString(spkByte)
 	// Get opk
-	qr = fmt.Sprintf("SELECT USER_OPK_KEY FROM USER_OPK_KEY WHERE USER_ID=%d AND USER_OPK_KEY_IS_DEL=0", id)
-	rows, err = db.Query(qr)
+	rows, err = db.Query("SELECT USER_OPK_KEY FROM USER_OPK_KEY WHERE USER_ID=? AND USER_OPK_KEY_IS_DEL=0", id)
 	if err != nil {
 		return ik, spk, opk, err
 	}
@@ -126,8 +119,7 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 	}
 	opk = hex.EncodeToString(opkByte)
 	// Mark opk as IS_DEL
-	qr = fmt.Sprintf("UPDATE USER_OPK_KEY SET USER_OPK_KEY_IS_DEL=1 WHERE USER_ID=%d AND USER_OPK_KEY=x'%s'", id, opk)
-	rows, err = db.Query(qr)
+	rows, err = db.Query("UPDATE USER_OPK_KEY SET USER_OPK_KEY_IS_DEL=1 WHERE USER_ID=? AND USER_OPK_KEY=?", id, opkByte)
 	if err != nil {
 		return ik, spk, opk, err
 	}
@@ -147,8 +139,7 @@ func KeyBundleGetIk(id int) (ik string, err error) {
 		return ik, err
 	}
 	// Get Ik
-	qr := fmt.Sprintf("SELECT USER_KEY_IK FROM USER_KEY WHERE USER_ID=%d", id)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("SELECT USER_KEY_IK FROM USER_KEY WHERE USER_ID=?", id)
 	if err != nil {
 		return ik, err
 	}

@@ -10,17 +10,9 @@ import (
 // POST
 func FriendRequestPost(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, fromId, err := model.UserTokenValidate(token)
+	fromId, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get to id
@@ -35,15 +27,15 @@ func FriendRequestPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Get ek
-	ek := r.FormValue("ek")
-	if !valid32Byte(ek) {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	ek, err := convert32Byte(r.FormValue("ek"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get opk used
-	opkUsed := r.FormValue("opkUsed")
-	if !valid32Byte(opkUsed) {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	opkUsed, err := convert32Byte(r.FormValue("opkUsed"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	err = model.FriendRequestAdd(fromId, toId, ek, opkUsed)
@@ -56,19 +48,12 @@ func FriendRequestPost(w http.ResponseWriter, r *http.Request) {
 }
 func FriendRequestPostAccept(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// validate email
 	email := r.FormValue("email")
 	if !validMail(email) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
@@ -92,19 +77,12 @@ func FriendRequestPostAccept(w http.ResponseWriter, r *http.Request) {
 }
 func FriendRequestPostReject(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// validate email
 	email := r.FormValue("email")
 	if !validMail(email) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
@@ -124,17 +102,9 @@ func FriendRequestPostReject(w http.ResponseWriter, r *http.Request) {
 // GET
 func FriendRequestGet(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get friend request that not rejected

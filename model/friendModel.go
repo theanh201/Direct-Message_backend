@@ -30,8 +30,7 @@ func FriendAdd(email string, id int) (err error) {
 	if id == id2 {
 		return fmt.Errorf("you cannot make friend with your self")
 	}
-	qr := fmt.Sprintf("INSERT INTO USER_FRIEND (USER_ID_1, USER_ID_2, USER_FRIEND_SINCE, USER_FRIEND_IS_DEL) VALUES(%d, %d, '%s', 0)", id, id2, now)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("INSERT INTO USER_FRIEND (USER_ID_1, USER_ID_2, USER_FRIEND_SINCE, USER_FRIEND_IS_DEL) VALUES(?, ?, ?, 0)", id, id2, now)
 	if err != nil {
 		return err
 	}
@@ -52,8 +51,7 @@ func FriendGet(id int) (friendList []entities.Friend, err error) {
 		return friendList, err
 	}
 	// columm 1 = id
-	qr := fmt.Sprintf("SELECT USER_ID_2, USER_FRIEND_SINCE FROM USER_FRIEND WHERE USER_ID_1=%d AND USER_FRIEND_IS_DEL=0", id)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("SELECT USER_ID_2, USER_FRIEND_SINCE FROM USER_FRIEND WHERE USER_ID_1=? AND USER_FRIEND_IS_DEL=0", id)
 	if err != nil {
 		return friendList, err
 	}
@@ -79,8 +77,7 @@ func FriendGet(id int) (friendList []entities.Friend, err error) {
 		})
 	}
 	// columm 2 = id
-	qr = fmt.Sprintf("SELECT USER_ID_1, USER_FRIEND_SINCE FROM USER_FRIEND WHERE USER_ID_2=%d AND USER_FRIEND_IS_DEL=0", id)
-	rows, err = db.Query(qr)
+	rows, err = db.Query("SELECT USER_ID_1, USER_FRIEND_SINCE FROM USER_FRIEND WHERE USER_ID_2=? AND USER_FRIEND_IS_DEL=0", id)
 	if err != nil {
 		return friendList, err
 	}
@@ -121,8 +118,7 @@ func FriendCheck(id1 int, id2 int) (err error) {
 	if id1 > id2 {
 		id1, id2 = id2, id1
 	}
-	qr := fmt.Sprintf("SELECT USER_FRIEND_SINCE FROM USER_FRIEND WHERE USER_ID_1=%d AND USER_ID_2=%d AND USER_FRIEND_IS_DEL=0", id1, id2)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("SELECT USER_FRIEND_SINCE FROM USER_FRIEND WHERE USER_ID_1=? AND USER_ID_2=? AND USER_FRIEND_IS_DEL=0", id1, id2)
 	if err != nil {
 		return err
 	}

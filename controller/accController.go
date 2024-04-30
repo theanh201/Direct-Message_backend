@@ -3,6 +3,7 @@ package controller
 import (
 	"DirectBackend/entities"
 	"DirectBackend/model"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -20,17 +21,12 @@ func AccPostLogin(w http.ResponseWriter, r *http.Request) {
 	var creds entities.Account
 	var err error = json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 	// Validate username
 	if !validMail(creds.Email) {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
-	// Validate password
-	if !valid32Byte(creds.Password) {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 	// Compare password
@@ -39,20 +35,25 @@ func AccPostLogin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if password != creds.Password {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		http.Error(w, "invalid username or password", http.StatusUnauthorized)
 		return
 	}
 	// Generate Token and save
 	token := generateSecureRandomString(32)
+	tokenByte, err := hex.DecodeString(token)
+	if err != nil {
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
+		return
+	}
 	now := time.Now()
 	timeout := now.AddDate(0, 0, 30).Format("2006-01-02 15:04:05")
-	err = model.UserTokenAddToDB(id, token, timeout)
+	err = model.UserTokenAddToDB(id, tokenByte, timeout)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	// Response
-	response := map[string]string{"message": "Login successful", "token": token, "timeout": timeout}
+	response := map[string]string{"message": "login successful", "token": token, "timeout": timeout}
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -61,50 +62,43 @@ func AccPostRegister(w http.ResponseWriter, r *http.Request) {
 	var creds entities.Account
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 	// Validate username
 	if !validMail(creds.Email) {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
-	// Validate password
-	if !valid32Byte(creds.Password) {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 	// Check if user already exsist
 	_, id, _ := model.AccGetUserPassword(creds.Email)
 	if id != -1 {
-		response := map[string]string{"message": "Username already exsist"}
+		response := map[string]string{"message": "username already exsist"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
+	// Validate password
+	password, err := convert32Byte(creds.Password)
+	if err != nil {
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
+		return
+	}
 	// Add user and response
-	err = model.AccAddUser(creds.Email, creds.Password)
+	err = model.AccAddUser(creds.Email, password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	response := map[string]string{"message": "Create sucessful"}
+	response := map[string]string{"message": "create sucessful"}
 	json.NewEncoder(w).Encode(response)
 }
 
 // GET
 func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get info
@@ -119,24 +113,16 @@ func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 
 func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get image if imgId = tokenId
 	imgName := r.FormValue("imgName")
 	imgId, err := strconv.Atoi(strings.Split(imgName, ".")[0])
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "fail to extract id from image name", http.StatusBadRequest)
 	}
 	if id == imgId {
 		http.ServeFile(w, r, fmt.Sprintf("./Avatar/%s", imgName))
@@ -149,7 +135,7 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if info.IsPrivate {
-		http.Error(w, "User is private", http.StatusUnauthorized)
+		http.Error(w, "user is private", http.StatusUnauthorized)
 		return
 	}
 	http.ServeFile(w, r, fmt.Sprintf("./Avatar/%s", imgName))
@@ -157,18 +143,9 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 
 func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, _, err := model.UserTokenValidate(token)
+	_, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get page
@@ -196,24 +173,15 @@ func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
 
 func AccGetUserByEmail(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, _, err := model.UserTokenValidate(token)
+	_, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Search by name
 	email := r.FormValue("email")
 	if !validMail(email) {
-		http.Error(w, "Valid email not found", http.StatusBadRequest)
+		http.Error(w, "valid email not found", http.StatusBadRequest)
 	}
 	info, err := model.AccGetByEmail(email)
 	if err != nil {
@@ -225,24 +193,16 @@ func AccGetUserByEmail(w http.ResponseWriter, r *http.Request) {
 
 func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get image if imgId = tokenId
 	imgName := r.FormValue("imgName")
 	imgId, err := strconv.Atoi(strings.Split(imgName, ".")[0])
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "fail to extract id from image", http.StatusBadRequest)
 	}
 	if id == imgId {
 		http.ServeFile(w, r, fmt.Sprintf("./Background/%s", imgName))
@@ -263,25 +223,10 @@ func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 
 // PUT
 func AccPutAvatar(w http.ResponseWriter, r *http.Request) {
-	// Limit request size
-	r.Body = http.MaxBytesReader(w, r.Body, MAX_REQUEST_IMG)
-	err := r.ParseMultipartForm(MAX_REQUEST_IMG)
+	// Validate token
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
 		return
 	}
 	// Update avatar
@@ -323,25 +268,10 @@ func AccPutAvatar(w http.ResponseWriter, r *http.Request) {
 }
 
 func AccPutBackground(w http.ResponseWriter, r *http.Request) {
-	// Limit request size
-	r.Body = http.MaxBytesReader(w, r.Body, MAX_REQUEST_IMG)
-	err := r.ParseMultipartForm(MAX_REQUEST_IMG)
+	// Validate token
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
 		return
 	}
 	// Update background
@@ -384,17 +314,9 @@ func AccPutBackground(w http.ResponseWriter, r *http.Request) {
 
 func AccPutEmail(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Update email
@@ -416,29 +338,26 @@ func AccPutEmail(w http.ResponseWriter, r *http.Request) {
 
 func AccPutPassword(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Update Password
 	password := r.FormValue("password")
 	if len(password) == 64 {
-		err = model.AccUpdatePassword(id, password)
+		pw, err := hex.DecodeString(password)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		err = model.AccUpdatePassword(id, pw)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
-		http.Error(w, "", http.StatusBadRequest)
+		http.Error(w, "Fail", http.StatusBadRequest)
 		return
 	}
 	// Reponse
@@ -448,17 +367,9 @@ func AccPutPassword(w http.ResponseWriter, r *http.Request) {
 
 func AccPutName(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Update name
@@ -480,29 +391,22 @@ func AccPutName(w http.ResponseWriter, r *http.Request) {
 
 func AccPutPrivateStatus(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Update private status
 	status := r.FormValue("isPrivate")
-	if len(status) == 1 {
-		err = model.AccUpdatePrivateStatus(id, status)
+	if status == "0" || status == "1" {
+		st, _ := strconv.Atoi(status)
+		err = model.AccUpdatePrivateStatus(id, st)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
-		http.Error(w, "len(isPrivate) != 1", http.StatusBadRequest)
+		http.Error(w, "status not 0 or 1", http.StatusBadRequest)
 		return
 	}
 	// Reponse
@@ -514,17 +418,9 @@ func AccPutPrivateStatus(w http.ResponseWriter, r *http.Request) {
 // DELETE
 func AccDeleteSelf(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	valid, id1, err := model.UserTokenValidate(token)
+	id1, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Validate email
@@ -545,7 +441,7 @@ func AccDeleteSelf(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if password != pwd {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		http.Error(w, "invalid username or password", http.StatusUnauthorized)
 		return
 	}
 	if id1 != id2 {

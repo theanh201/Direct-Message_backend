@@ -3,7 +3,6 @@ package model
 import (
 	"DirectBackend/entities"
 	"database/sql"
-	"fmt"
 )
 
 func MessagePostFriendUnencrypt(idFrom int, idTo int, timeNow string, fileName string) (err error) {
@@ -18,8 +17,7 @@ func MessagePostFriendUnencrypt(idFrom int, idTo int, timeNow string, fileName s
 		return err
 	}
 	// Insert message
-	qr := fmt.Sprintf("INSERT INTO MESSAGE(USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT) VALUES (%d,%d,'%s','%s',0)", idFrom, idTo, fileName, timeNow)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("INSERT INTO MESSAGE(USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT) VALUES (?,?,?,?,0)", idFrom, idTo, fileName, timeNow)
 	if err != nil {
 		return err
 	}
@@ -38,8 +36,7 @@ func MessageGetAll(id int) (messages []entities.Message, err error) {
 		return messages, err
 	}
 	// GetAll
-	qr := fmt.Sprintf("SELECT USER_ID_FROM, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT FROM MESSAGE WHERE USER_ID_TO=%d", id)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("SELECT USER_ID_FROM, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT FROM MESSAGE WHERE USER_ID_TO=?", id)
 	if err != nil {
 		return messages, err
 	}
@@ -82,8 +79,7 @@ func MessageGetContentPermission(contentName string) (idFrom int, idTo int, err 
 	if err != nil {
 		return idFrom, idTo, err
 	}
-	qr := fmt.Sprintf("SELECT USER_ID_FROM, USER_ID_TO FROM MESSAGE WHERE MESSAGE_CONTENT=%s", contentName)
-	rows, err := db.Query(qr)
+	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO FROM MESSAGE WHERE MESSAGE_CONTENT=?", contentName)
 	if err != nil {
 		return idFrom, idTo, err
 	}

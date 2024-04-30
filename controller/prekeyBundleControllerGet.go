@@ -11,17 +11,9 @@ import (
 // GET
 func PrekeyBundleGet(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, _, err := model.UserTokenValidate(token)
+	_, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// getKeyBundle
@@ -42,24 +34,15 @@ func PrekeyBundleGet(w http.ResponseWriter, r *http.Request) {
 // PUT
 func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Update IK
-	ik := r.FormValue("ik")
-	if !valid32Byte(ik) {
-		http.Error(w, "Invalid ik", http.StatusBadRequest)
-		return
+	ik, err := convert32Byte(r.FormValue("ik"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	err = model.KeyBundleUpdateIk(id, ik)
 	if err != nil {
@@ -67,10 +50,9 @@ func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Update SPK
-	spk := r.FormValue("spk")
-	if !valid32Byte(ik) {
-		http.Error(w, "Invalid spk", http.StatusBadRequest)
-		return
+	spk, err := convert32Byte(r.FormValue("spk"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	err = model.KeyBundleUpdateSpk(id, spk)
 	if err != nil {
@@ -79,16 +61,22 @@ func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 	}
 	// Update OPK
 	opk := strings.Split(r.FormValue("opk"), ",")
+	var opkByteArr [][]byte
 	for _, val := range opk {
-		if !valid32Byte(val) {
+		opkByte, err := convert32Byte(val)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		if err != nil {
 			http.Error(w, "Invalid opk", http.StatusBadRequest)
 			return
 		}
+		opkByteArr = append(opkByteArr, opkByte)
 	}
 	if len(opk) > 5 {
 		http.Error(w, "Max 5 opk", http.StatusBadRequest)
 	}
-	err = model.KeyBundleUpdateOpk(id, opk)
+	err = model.KeyBundleUpdateOpk(id, opkByteArr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

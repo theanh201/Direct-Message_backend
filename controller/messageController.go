@@ -20,17 +20,9 @@ func MessagePostFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, idFrom, err := model.UserTokenValidate(token)
+	idFrom, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	timeNow := time.Now().Format("2006-01-02 15:04:05")
@@ -90,17 +82,9 @@ func MessagePostFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 
 func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get message
@@ -114,17 +98,9 @@ func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 
 func MessageGetContent(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	token := r.FormValue("token")
-	if !valid32Byte(token) {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
-	}
-	valid, id, err := model.UserTokenValidate(token)
+	id, err := validateToken(r.FormValue("token"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if !valid {
-		http.Error(w, "Token expired", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get content file name
