@@ -36,32 +36,52 @@ func MessageGetAll(id int) (messages []entities.Message, err error) {
 		return messages, err
 	}
 	// GetAll
-	rows, err := db.Query("SELECT USER_ID_FROM, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT FROM MESSAGE WHERE USER_ID_TO=?", id)
+	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT FROM MESSAGE WHERE USER_ID_TO=? OR USER_ID_FROM=?", id, id)
 	if err != nil {
 		return messages, err
 	}
 	defer rows.Close()
+	selfInfo, err := AccGetInfo(id)
+	if err != nil {
+		return messages, err
+	}
 	cache := make(map[int]string) // Key: id, Value: email
 	for rows.Next() {
 		var tempMessage entities.Message
-		var tempId int
+		var tempSender int
+		var tempReceiver int
 		var tempIsEncrypt []byte
-		if err := rows.Scan(&tempId, &tempMessage.Content, &tempMessage.Since, &tempIsEncrypt); err != nil {
+		if err := rows.Scan(&tempSender, &tempReceiver, &tempMessage.Content, &tempMessage.Since, &tempIsEncrypt); err != nil {
 			return messages, nil
 		}
-		tempMessage.IsEncrypt = (tempIsEncrypt[0] & 1) != 0
-		_, inCache := cache[tempId]
-		if !inCache {
-			// Get email and add to cache
-			info, err := AccGetInfo(tempId)
-			if err != nil {
-				return messages, err
+		if tempReceiver == id {
+			tempMessage.ReceiverEmail = selfInfo.Email
+			tempMessage.IsEncrypt = (tempIsEncrypt[0] & 1) != 0
+			_, inCache := cache[tempSender]
+			if !inCache {
+				info, err := AccGetInfo(tempSender)
+				if err != nil {
+					return messages, err
+				}
+				cache[tempSender] = info.Email
+				tempMessage.SenderEmail = info.Email
+			} else {
+				tempMessage.SenderEmail = cache[tempSender]
 			}
-			cache[tempId] = info.Email
-			tempMessage.SenderEmail = info.Email
 		} else {
-			// Get from cache
-			tempMessage.SenderEmail = cache[tempId]
+			tempMessage.SenderEmail = selfInfo.Email
+			// receiver email
+			_, inCache := cache[tempReceiver]
+			if !inCache {
+				info, err := AccGetInfo(tempReceiver)
+				if err != nil {
+					return messages, err
+				}
+				cache[tempReceiver] = info.Email
+				tempMessage.ReceiverEmail = info.Email
+			} else {
+				tempMessage.ReceiverEmail = cache[tempReceiver]
+			}
 		}
 		messages = append(messages, tempMessage)
 	}

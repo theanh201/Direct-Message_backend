@@ -1,7 +1,7 @@
 drop database Direct_Backend_DB;
 create database Direct_Backend_DB;
 use Direct_Backend_DB;
-select * from USER;
+-- select * from MESSAGE;
 CREATE TABLE USER (
     USER_ID INT AUTO_INCREMENT,
     USER_EMAIL CHAR(64) UNIQUE,
