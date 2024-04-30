@@ -11,10 +11,10 @@ curl -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com
 ### PUT
 ``` bash
 // Update avatar
-curl -X PUT -F 'avatar=@/home/admin/MEGA/Pictures/Wallpapers/windowChan.jpg' -F 'token=5cca2f977dc8cd9867e89d25eef2a33363d06cb2cf8db58fc5547e8a0f1fed20' localhost:8080/update-avatar
+curl -X PUT -F 'avatar=@/home/admin/MEGA/Pictures/Wallpapers/windowChan.jpg' -F 'token=2dbfe6e67d6cfb6bb1dc7d6332ef60d39731dc93cb6a0e2b20811b2d14208520' localhost:8080/update-avatar
 
 // Update background
-curl -X PUT -F 'background=@/home/admin/MEGA/Pictures/Wallpapers/windowChan.jpg' -F 'token=f3d16053e5ddcd02b1c21a1543163e603f73c51bfdc5c6ba916e00ea257625fa' localhost:8080/update-background
+curl -X PUT -F 'background=@/home/admin/MEGA/Pictures/Wallpapers/windowChan.jpg' -F 'token=2dbfe6e67d6cfb6bb1dc7d6332ef60d39731dc93cb6a0e2b20811b2d14208520' localhost:8080/update-background
 
 // Update email this will mark all current token as deleted
 curl -X PUT -F 'email=theanh1@mail.com' -F 'token=f3d16053e5ddcd02b1c21a1543163e603f73c51bfdc5c6ba916e00ea257625fa' localhost:8080/update-email
@@ -34,10 +34,10 @@ curl -X PUT -F 'isPrivate=0' -F 'token=8bceb11f5c2f037b7a2320dd27f1d65625b91f7be
 curl -X GET -F 'token=8bceb11f5c2f037b7a2320dd27f1d65625b91f7be057c35388b248bf1bd9b8cc' localhost:8080/get-self-info
 
 // Get avatar
-curl -X GET -F 'imgName=1.jpg' -F 'token=422167be4da19435b73dadece46117040e74f4440e4b6f51d6985563c61ea03e' localhost:8080/get-avatar --output 1.jpg
+curl -X GET -F 'imgName=1.jpg' -F 'token=2dbfe6e67d6cfb6bb1dc7d6332ef60d39731dc93cb6a0e2b20811b2d14208520' localhost:8080/get-avatar --output 1.jpg
 
 // Get background
-curl -X GET -F 'imgName=1.jpg' -F 'token=8bceb11f5c2f037b7a2320dd27f1d65625b91f7be057c35388b248bf1bd9b8cc' localhost:8080/get-background --output 1.jpg
+curl -X GET -F 'imgName=1.jpg' -F 'token=2dbfe6e67d6cfb6bb1dc7d6332ef60d39731dc93cb6a0e2b20811b2d14208520' localhost:8080/get-background --output 1.jpg
 ```
 ### DELETE
 ``` bash
@@ -69,4 +69,13 @@ curl -X POST -F 'email=user2@mail.com' -F 'token=95d0678e0e865f55d967d16f5cea6c4
 ``` bash 
 curl -X GET -F 'email=user1@mail.com' -F 'token=95b1abaa7f1b1ec063007fed21ed57b9ddb93297dc2936cd5e21c329b886ffda' localhost:8080/get-prekey-bundle
 curl -X GET -F 'token=95d0678e0e865f55d967d16f5cea6c4d15922594a72a2fb3ee2c0b1f22859647' localhost:8080/get-friend-request
+```
+## Friend list stuff
+### GET
+``` bash
+curl -X GET -F 'token=365a2ceefc83520af2557de0800e592b3ac7b9ab86257bde287656e54fb0a258' localhost:8080/get-friend-list
+```
+### POST
+``` bash
+curl -X POST -F 'email=user2@mail.com' -F 'content=@/home/admin/Downloads/text.txt' -F 'token=345daa6eca8233c45d65d8eaf6f4da30ffece7a56b85443e787478930e3757be' localhost:8080/send-message-friend-unencrypt
 ```

@@ -14,8 +14,6 @@ import (
 	"time"
 )
 
-const MAX_REQUEST_IMG = 10 << 20 // 10 MB
-
 // POST
 func AccPostLogin(w http.ResponseWriter, r *http.Request) {
 	// Decode json request
@@ -141,7 +139,7 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	if id == imgId {
-		http.ServeFile(w, r, fmt.Sprintf("./avatar/%s", imgName))
+		http.ServeFile(w, r, fmt.Sprintf("./Avatar/%s", imgName))
 		return
 	}
 	// Get imgage if imgId != private
@@ -154,7 +152,7 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User is private", http.StatusUnauthorized)
 		return
 	}
-	http.ServeFile(w, r, fmt.Sprintf("./avatar/%s", imgName))
+	http.ServeFile(w, r, fmt.Sprintf("./Avatar/%s", imgName))
 }
 
 func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
@@ -247,7 +245,7 @@ func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	if id == imgId {
-		http.ServeFile(w, r, fmt.Sprintf("./background/%s", imgName))
+		http.ServeFile(w, r, fmt.Sprintf("./Background/%s", imgName))
 		return
 	}
 	// Get imgage if imgId != private
@@ -260,7 +258,7 @@ func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User is private", http.StatusUnauthorized)
 		return
 	}
-	http.ServeFile(w, r, fmt.Sprintf("./background/%s", imgName))
+	http.ServeFile(w, r, fmt.Sprintf("./Background/%s", imgName))
 }
 
 // PUT
@@ -294,14 +292,14 @@ func AccPutAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 	// Create the uploads folder if it doesn't already exist
-	err = os.MkdirAll("avatar", os.ModePerm)
+	err = os.MkdirAll("Avatar", os.ModePerm)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	// Create a new file in the uploads directory
 	fileName := fmt.Sprintf("%d%s", id, filepath.Ext(fileHeader.Filename))
-	dst, err := os.Create(fmt.Sprintf("./%s/%s", "avatar", fileName))
+	dst, err := os.Create(fmt.Sprintf("./%s/%s", "Avatar", fileName))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -354,14 +352,14 @@ func AccPutBackground(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 	// Create the uploads folder if it doesn't already exist
-	err = os.MkdirAll("background", os.ModePerm)
+	err = os.MkdirAll("Background", os.ModePerm)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	// Create a new file in the uploads directory
 	fileName := fmt.Sprintf("%d%s", id, filepath.Ext(fileHeader.Filename))
-	dst, err := os.Create(fmt.Sprintf("./%s/%s", "background", fileName))
+	dst, err := os.Create(fmt.Sprintf("./%s/%s", "Background", fileName))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

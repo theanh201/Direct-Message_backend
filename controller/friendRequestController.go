@@ -80,7 +80,7 @@ func FriendRequestPostAccept(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// Accect friend request
+	// Accect friend request and create group
 	err = model.FriendAdd(email, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

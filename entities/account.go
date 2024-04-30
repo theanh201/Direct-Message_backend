@@ -6,11 +6,6 @@ type Account struct {
 	Password string `json:"password"`
 }
 
-type Token struct {
-	Tokens        []string
-	TokensTimeOut []int
-}
-
 type AccountInfo struct {
 	Email      string
 	Name       string

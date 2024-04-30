@@ -3,8 +3,6 @@ echo -n "Select your option: "
 read options
 case $options in
     "1")
-        for i in {0..1000..1}
-        do
         echo "Create user1@mail.com"
         curl -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' http://localhost:8080/register
         echo "Create user2@mail.com"
@@ -14,6 +12,7 @@ case $options in
         echo "Login user1@mail.com"
         data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' http://localhost:8080/login)
         token1=$(echo "$data" | jq -r '.token')
+        ee
         echo "Login user2@mail.com"
         data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user2@mail.com", "password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' http://localhost:8080/login)
         token2=$(echo "$data" | jq -r '.token')
@@ -30,15 +29,20 @@ case $options in
         echo "user2 get user1 keybundle"
         curl_command="curl --no-progress-meter -X GET -F 'email=user1@mail.com' -F 'token=${token2}' localhost:8080/get-prekey-bundle"
         data=$(eval "$curl_command")
-        echo $data
+        opk_user1=$(echo "$data" | jq -r '.Opk')
         echo "--------------------------------------------"
 
         echo "user2 send friend request to user1"
-        opk_user1=$(echo "$data" | jq -r '.Opk')
         curl_command="curl --no-progress-meter -X POST -F 'toEmail=user1@mail.com' -F'ek=7fb26648cca726f2cce63eda8e92e220684d0200f08d7076a3a4beec121af720' -F 'opkUsed=${opk_user1}' -F 'token=${token2}' localhost:8080/add-friend-request"
         data=$(eval "$curl_command")
         echo $data
-        echo $i
-        done
+
+        echo "user1 accept friend request from user2"
+        curl_command="curl -X POST -F 'email=user2@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
+        eval "$curl_command"
+
+        echo "user1 friend list"
+        curl_command="curl -X GET -F 'token=${token1}' localhost:8080/get-friend-list"
+        eval "$curl_command"
     ;;
 esac

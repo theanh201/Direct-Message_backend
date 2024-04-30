@@ -6,6 +6,8 @@ import (
 	"net/mail"
 )
 
+const MAX_REQUEST_IMG = 10 << 20 // 10 MB
+
 func validMail(s string) bool {
 	if len(s) > 64 {
 		return false
