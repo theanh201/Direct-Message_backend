@@ -73,7 +73,7 @@ curl -X GET -F 'token=01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d
 ### GET
 ``` bash
 curl -X GET -F 'token=01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d6ae36a' localhost:8080/get-friend-list
-curl -X GET -F 'token=27c4eedf7148613e87264b78ae4c0a3bea1dda563ac2dab237df1e9d167f375c' localhost:8080/get-all-message
+curl -X GET -F 'token=75d5a92d47a0e97dfc96b78d8708374ce20dd117b8a55c257a190b287b21f738' localhost:8080/get-all-message
 curl -X GET -F 'content=1_2024-04-30 22:23:09.txt' -F 'token=75d5a92d47a0e97dfc96b78d8708374ce20dd117b8a55c257a190b287b21f738' localhost:8080/get-message-content --output '1_2024-04-30 17:50:09.txt'
 ```
 ### POST
