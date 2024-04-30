@@ -44,6 +44,12 @@ func MessagePostFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
+	// Check if 2 are friend
+	err = model.FriendCheck(idFrom, idTo)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// Get Content
 	file, fileHeader, err := r.FormFile("content")
 	if err != nil {
@@ -78,6 +84,59 @@ func MessagePostFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Response
-	response := map[string]string{"message": "Background have been updated"}
+	response := map[string]string{"message": "Message sent"}
 	json.NewEncoder(w).Encode(response)
+}
+
+func MessageGetAll(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	token := r.FormValue("token")
+	if !valid32Byte(token) {
+		http.Error(w, "Invalid token", http.StatusBadRequest)
+		return
+	}
+	valid, id, err := model.UserTokenValidate(token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else if !valid {
+		http.Error(w, "Token expired", http.StatusUnauthorized)
+		return
+	}
+	// Get message
+	messages, err := model.MessageGetAll(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(messages)
+}
+
+func MessageGetContent(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	token := r.FormValue("token")
+	if !valid32Byte(token) {
+		http.Error(w, "Invalid token", http.StatusBadRequest)
+		return
+	}
+	valid, id, err := model.UserTokenValidate(token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else if !valid {
+		http.Error(w, "Token expired", http.StatusUnauthorized)
+		return
+	}
+	// Get content file name
+	contentName := r.FormValue("content")
+	idFrom, idTo, err := model.MessageGetContentPermission(contentName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if id != idFrom && id != idTo {
+		http.Error(w, "You are not allow to access this information", http.StatusUnauthorized)
+		return
+	}
+	http.ServeFile(w, r, fmt.Sprintf("./Message/%s", contentName))
 }

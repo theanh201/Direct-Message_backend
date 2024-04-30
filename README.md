@@ -73,9 +73,11 @@ curl -X GET -F 'token=95d0678e0e865f55d967d16f5cea6c4d15922594a72a2fb3ee2c0b1f22
 ## Friend list stuff
 ### GET
 ``` bash
-curl -X GET -F 'token=365a2ceefc83520af2557de0800e592b3ac7b9ab86257bde287656e54fb0a258' localhost:8080/get-friend-list
+curl -X GET -F 'token=8e0b98788e6115e595486b3361876a144a87c7eb0ae1ac443b33a3082f0dfac0' localhost:8080/get-friend-list
+curl -X GET -F 'token=8e0b98788e6115e595486b3361876a144a87c7eb0ae1ac443b33a3082f0dfac0' localhost:8080/get-all-message
+curl -X GET -F 'content=1_2024-04-30 17:50:09.txt' -F 'token=8e0b98788e6115e595486b3361876a144a87c7eb0ae1ac443b33a3082f0dfac0' localhost:8080/get-message-content --output '1_2024-04-30 17:50:09.txt'
 ```
 ### POST
 ``` bash
-curl -X POST -F 'email=user2@mail.com' -F 'content=@/home/admin/Downloads/text.txt' -F 'token=345daa6eca8233c45d65d8eaf6f4da30ffece7a56b85443e787478930e3757be' localhost:8080/send-message-friend-unencrypt
+curl -X POST -F 'email=user2@mail.com' -F 'content=@/home/admin/Downloads/text.txt' -F 'token=51cfdddad1ed965974035d54b42a5f2920a467f7bbf5d62c756c6f55dbc0fcb9' localhost:8080/send-message-friend-unencrypt
 ```

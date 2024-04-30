@@ -107,3 +107,30 @@ func FriendGet(id int) (friendList []entities.Friend, err error) {
 	}
 	return friendList, err
 }
+func FriendCheck(id1 int, id2 int) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	if id1 > id2 {
+		id1, id2 = id2, id1
+	}
+	qr := fmt.Sprintf("SELECT USER_FRIEND_SINCE FROM USER_FRIEND WHERE USER_ID_1=%d AND USER_ID_2=%d AND USER_FRIEND_IS_DEL=0", id1, id2)
+	rows, err := db.Query(qr)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	rows.Next()
+	var temp string
+	if err := rows.Scan(&temp); err != nil {
+		return err
+	}
+	return err
+}
