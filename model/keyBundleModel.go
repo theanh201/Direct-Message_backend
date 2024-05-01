@@ -106,6 +106,20 @@ func KeyBundleGetByEmail(userEmail string) (ik string, spk string, opk string, e
 	}
 	ik = hex.EncodeToString(ikByte)
 	spk = hex.EncodeToString(spkByte)
+	// Get opk count
+	rows, err = db.Query("SELECT COUNT(*) FROM USER_OPK_KEY WHERE USER_ID=? AND USER_OPK_KEY_IS_DEL=0;", id)
+	if err != nil {
+		return ik, spk, opk, err
+	}
+	defer rows.Close()
+	var count int
+	rows.Next()
+	if err := rows.Scan(&count); err != nil {
+		return ik, spk, opk, err
+	}
+	if count == 0 {
+		return ik, spk, opk, err
+	}
 	// Get opk
 	rows, err = db.Query("SELECT USER_OPK_KEY FROM USER_OPK_KEY WHERE USER_ID=? AND USER_OPK_KEY_IS_DEL=0", id)
 	if err != nil {
