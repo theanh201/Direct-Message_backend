@@ -14,14 +14,16 @@ function login(){
     clear
     while true; do
         clear
-        echo "--Main Menu--
-1. Edit profile
-2. Search other user
-0. Logout"
+        echo "--Main Menu--"
+        echo "1. Edit profile"
+        echo "2. Search other user"
+        echo "3. Update prekey bunle (this should happen automatic when login)"
+        echo "0. Logout"
         echo -n "Select your option: "
         read options
         case $options in 
             "0")
+            clear
             return
             ;;
             "1")
@@ -43,6 +45,7 @@ function login(){
                     read options
                     case $options in 
                     0)
+                        clear
                         break
                     ;;
                     1)
@@ -122,15 +125,32 @@ function login(){
                     echo "2. Search by email"
                     echo "0. Return"
                     read options
-                    case $option in
+                    case $options in
+                    0)
+                        clear
+                        break
+                    ;;
                     1)
                         clear
-                        echo -n "Name want to search"
+                        echo -n "Name want to search: "
                         read name
-                        curl_command
+                        echo -n "Page: "
+                        read page
+                        curl_command="curl -X GET -F 'name=$name' -F 'page=$page' -F 'token=$token' localhost:8080/get-by-name"
+                        eval $curl_command
+                    ;;
+                    2)
+                        clear
+                        echo -n "Email want to search: "
+                        read email
+                        curl_command="curl -X GET -F 'email=$email' -F 'token=$token' localhost:8080/get-by-email"
+                        eval $curl_command
                     ;;
                     esac
                 done
+            ;;
+            3)
+                echo "not yet implement"  
             ;;
         esac
     done
@@ -145,36 +165,37 @@ while true; do
     read options
     case $options in
     "1")
-    clear
-    echo "--Login--"
-    echo -n "Account: "
-    read account
-    echo -n "Password: "
-    read password
-    hashed_password=$(hash $password)
-    # echo -n $hashed_password
-    curl_command="curl --no-progress-meter -X POST -H \"Content-Type: application/json\" -d '{\"username\":\"$account\", \"password\":\"$hashed_password\"}' http://localhost:8080/login"
-    data=$(eval $curl_command)
-    # echo $data
-    token=$(echo "$data" | jq -r '.token')
-    if [ -n "$token" ];then
-        login $token
-    fi
+        clear
+        echo "--Login--"
+        echo -n "Account: "
+        read account
+        echo -n "Password: "
+        read password
+        hashed_password=$(hash $password)
+        # echo -n $hashed_password
+        curl_command="curl --no-progress-meter -X POST -H \"Content-Type: application/json\" -d '{\"username\":\"$account\", \"password\":\"$hashed_password\"}' http://localhost:8080/login"
+        data=$(eval $curl_command)
+        # echo $data
+        token=$(echo "$data" | jq -r '.token')
+        if [ -n "$token" ];then
+            login $token
+        fi
     ;;
     "2")
-    clear
-    echo "--Register--"
-    echo -n "Account: "
-    read account
-    echo -n "Password: "
-    read password
-    hashed_password=$(hash $password)
-    # echo -n $hashed_password
-    curl_command="curl --no-progress-meter -X POST -H \"Content-Type: application/json\" -d '{\"username\":\"$account\", \"password\":\"$hashed_password\"}' http://localhost:8080/register"
-    eval $curl_command
+        clear
+        echo "--Register--"
+        echo -n "Account: "
+        read account
+        echo -n "Password: "
+        read password
+        hashed_password=$(hash $password)
+        # echo -n $hashed_password
+        curl_command="curl --no-progress-meter -X POST -H \"Content-Type: application/json\" -d '{\"username\":\"$account\", \"password\":\"$hashed_password\"}' http://localhost:8080/register"
+        eval $curl_command
     ;;
     "0")
-    break
+        clear
+        break
     ;;
     esac
 done

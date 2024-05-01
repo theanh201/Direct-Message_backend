@@ -66,7 +66,7 @@ curl -X POST -F 'email=user2@mail.com' -F 'token=01f36eb7afe7a112e019fb7f494ca52
 ```
 ### GET
 ``` bash 
-curl -X GET -F 'email=user1@mail.com' -F 'token=69f5370d221aab26c9c3bfe4f8afbbf2097b224bdd6a86c8bda79baa10a3182e' localhost:8080/get-prekey-bundle
+curl -X GET -F 'email=user1@mail.com' -F 'token=e89b6a8f11494ffc94399f6bdacaa30eb5a783327c88c8cbc878c792bd4dca29' localhost:8080/get-prekey-bundle
 curl -X GET -F 'token=01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d6ae36a' localhost:8080/get-friend-request
 ```
 ## Friend list stuff
