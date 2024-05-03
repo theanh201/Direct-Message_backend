@@ -43,43 +43,60 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		// Add to online if not online
-		if !message.OnlineStatus {
+		switch message.Case {
+		case 0:
 			onlineConn[idFrom] = conn
 			conn.WriteMessage(websocket.TextMessage, []byte("You are now online"))
 			continue
-		}
-		// Get current time
-		timeNow := time.Now().Format("2006-01-02 15:04:05")
-		// Validate mail
-		if !validMail(message.Email) {
-			conn.WriteMessage(websocket.TextMessage, []byte("in valid mail"))
-			break
-		}
-		_, idTo, err := model.AccGetUserPassword(message.Email)
-		if err != nil {
-			conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
-			break
-		}
-		// Check if 2 are friend
-		err = model.FriendCheck(idFrom, idTo)
-		if err != nil {
-			conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
-			break
-		}
-		// Upload to db
-		err = model.MessageFriendUnencrypt(idFrom, idTo, timeNow, message.Content)
-		if err != nil {
-			conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
-			break
-		}
-		// Send to user if online
-		toConn, isOnline := onlineConn[idTo]
-		if isOnline {
-			err = toConn.WriteMessage(websocket.TextMessage, []byte(message.Content))
+		case 1:
+			// Get current time
+			timeNow := time.Now().Format("2006-01-02 15:04:05")
+			// Validate mail
+			if !validMail(message.Email) {
+				conn.WriteMessage(websocket.TextMessage, []byte("in valid mail"))
+				break
+			}
+			_, idTo, err := model.AccGetUserPassword(message.Email)
 			if err != nil {
-				conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				break
+			}
+			// Check if 2 are friend
+			err = model.FriendCheck(idFrom, idTo)
+			if err != nil {
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				break
+			}
+			// Upload to db
+			err = model.MessageFriendUnencrypt(idFrom, idTo, timeNow, message.Content)
+			if err != nil {
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				break
+			}
+			// Send to user if online
+			toConn, isOnline := onlineConn[idTo]
+			if isOnline {
+				err = toConn.WriteMessage(websocket.TextMessage, []byte(message.Content))
+				if err != nil {
+					conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
+				}
 			}
 		}
 	}
 	delete(onlineConn, idFrom)
+}
+func MessageGetAll(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	id, err := validateToken(r.FormValue("token"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Get message
+	messages, err := model.MessageGetAll(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(messages)
 }

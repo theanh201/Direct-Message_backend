@@ -15,8 +15,8 @@ type MessageToMe struct {
 }
 
 type WebsocketMessage struct {
-	OnlineStatus bool   `json:"onlineStatus"`
-	Token        string `json:"token"`
-	Content      string `json:"content"`
-	Email        string `json:"email"`
+	Case    int    `json:"case"`
+	Token   string `json:"token"`
+	Content string `json:"content"`
+	Email   string `json:"email"`
 }

@@ -73,10 +73,27 @@ curl -X GET -F 'token=1777593ba77e512e72a750a90f7ab85a50d729d7d2fdb30984be02dd36
 ### GET
 ``` bash
 curl -X GET -F 'token=01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d6ae36a' localhost:8080/get-friend-list
-curl -X GET -F 'token=51ebb08133569c05e89bee567b388ccd9f10011512ab159da357b34e79e3d447' localhost:8080/get-all-message
-curl -X GET -F 'content=2_2024-05-03 13:08:59.txt' -F 'token=51ebb08133569c05e89bee567b388ccd9f10011512ab159da357b34e79e3d447' localhost:8080/get-message-content --output 'message.txt'
+curl -X GET -F 'token=12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9' localhost:8080/get-all-message
 ```
 ### POST
 ``` bash
 curl -X POST -F 'email=user1@mail.com' -F 'content=@/home/admin/Downloads/text.txt' -F 'token=51ebb08133569c05e89bee567b388ccd9f10011512ab159da357b34e79e3d447' localhost:8080/send-message-friend-unencrypt
 ```
+## ws://localhost:8080/send-message-friend-unencrypt
+this api is for messaging with websocket, before sending anymessage you need to add youself to the online list of the server by sending a json file with you token like this
+``` json
+{
+    "case":0,
+    "token":"your_token_is_here"
+}
+```
+after that you can start sending message
+``` json
+{
+    "case":1,
+    "token":"your_token_is_here",
+    "content":"this_is_my_message",
+    "email":"user1@mail.com"
+}
+```
+if other user are online, message are dilivered to the other user
