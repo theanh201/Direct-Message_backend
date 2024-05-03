@@ -1,7 +1,7 @@
 drop database Direct_Backend_DB;
 create database Direct_Backend_DB;
 use Direct_Backend_DB;
-select * from USER;
+select * from MESSAGE;
 CREATE TABLE USER (
     USER_ID INT AUTO_INCREMENT,
     USER_EMAIL CHAR(64) UNIQUE,
@@ -80,7 +80,7 @@ CREATE TABLE MESSAGE (
     USER_ID_FROM INT,
     USER_ID_TO INT,
     USER_GROUP_ID INT,
-    MESSAGE_CONTENT VARcHAR(128),
+    MESSAGE_CONTENT varchar(5000),
     MESSAGE_SINCE DATETIME,
     MESSAGE_IS_ENCRYPT BIT,
     PRIMARY KEY (USER_ID_FROM, MESSAGE_SINCE),

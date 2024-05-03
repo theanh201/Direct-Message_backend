@@ -5,7 +5,7 @@ import (
 	"database/sql"
 )
 
-func MessagePostFriendUnencrypt(idFrom int, idTo int, timeNow string, fileName string) (err error) {
+func MessagePostFriendUnencrypt(idFrom int, idTo int, timeNow string, content string) (err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {
@@ -17,7 +17,7 @@ func MessagePostFriendUnencrypt(idFrom int, idTo int, timeNow string, fileName s
 		return err
 	}
 	// Insert message
-	rows, err := db.Query("INSERT INTO MESSAGE(USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT) VALUES (?,?,?,?,0)", idFrom, idTo, fileName, timeNow)
+	rows, err := db.Query("INSERT INTO MESSAGE(USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT) VALUES (?,?,?,?,0)", idFrom, idTo, content, timeNow)
 	if err != nil {
 		return err
 	}
