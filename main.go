@@ -41,9 +41,11 @@ func main() {
 	router.HandleFunc("/reject-friend-request", controller.FriendRequestPostReject).Methods("POST")
 	// Get friend list
 	router.HandleFunc("/get-friend-list", controller.FriendGet).Methods("GET")
-	// Get all message to me
+	// Get all message
 	router.HandleFunc("/get-all-message", controller.MessageGetAll).Methods("GET")
 	// Send message unencrypt to friend
 	router.HandleFunc("/send-message-friend-unencrypt", controller.MessageFriendUnencrypt)
+	// Get all message after time frame
+	// router.HandleFunc("/get-all-message-after-time", controller.MessageGetAllAfterTime).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

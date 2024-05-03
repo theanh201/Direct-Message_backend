@@ -17,7 +17,7 @@ func MessageFriendUnencrypt(idFrom int, idTo int, timeNow string, content string
 		return err
 	}
 	// Insert message
-	rows, err := db.Query("INSERT INTO MESSAGE(USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT) VALUES (?,?,?,?,0)", idFrom, idTo, content, timeNow)
+	rows, err := db.Query("INSERT INTO MESSAGE(USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE) VALUES (?,?,?,?,0, 0)", idFrom, idTo, content, timeNow)
 	if err != nil {
 		return err
 	}
@@ -36,7 +36,7 @@ func MessageGetAll(id int) (messages []entities.Message, err error) {
 		return messages, err
 	}
 	// GetAll
-	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT FROM MESSAGE WHERE USER_ID_TO=? OR USER_ID_FROM=?", id, id)
+	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE FROM MESSAGE WHERE USER_ID_TO=? OR USER_ID_FROM=?", id, id)
 	if err != nil {
 		return messages, err
 	}
@@ -51,12 +51,13 @@ func MessageGetAll(id int) (messages []entities.Message, err error) {
 		var tempSender int
 		var tempReceiver int
 		var tempIsEncrypt []byte
-		if err := rows.Scan(&tempSender, &tempReceiver, &tempMessage.Content, &tempMessage.Since, &tempIsEncrypt); err != nil {
+		var tempIsFile []byte
+		if err := rows.Scan(&tempSender, &tempReceiver, &tempMessage.Content, &tempMessage.Since, &tempIsEncrypt, &tempIsFile); err != nil {
 			return messages, nil
 		}
+		// Caching id = email
 		if tempReceiver == id {
 			tempMessage.ReceiverEmail = selfInfo.Email
-			tempMessage.IsEncrypt = (tempIsEncrypt[0] & 1) != 0
 			_, inCache := cache[tempSender]
 			if !inCache {
 				info, err := AccGetInfo(tempSender)
@@ -83,6 +84,8 @@ func MessageGetAll(id int) (messages []entities.Message, err error) {
 				tempMessage.ReceiverEmail = cache[tempReceiver]
 			}
 		}
+		tempMessage.IsEncrypt = (tempIsEncrypt[0] & 1) != 0
+		tempMessage.IsFile = (tempIsFile[0] & 1) != 0
 		messages = append(messages, tempMessage)
 	}
 	return messages, err

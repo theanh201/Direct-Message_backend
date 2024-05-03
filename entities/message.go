@@ -6,6 +6,7 @@ type Message struct {
 	Content       string
 	Since         string
 	IsEncrypt     bool
+	IsFile        bool
 }
 type MessageToMe struct {
 	SenderEmail string

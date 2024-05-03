@@ -13,6 +13,7 @@ import (
 
 var onlineConn = make(map[int]*websocket.Conn)
 
+// WebSocket
 func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 	// Web socket upgrade
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -85,6 +86,8 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 	}
 	delete(onlineConn, idFrom)
 }
+
+// GET
 func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	id, err := validateToken(r.FormValue("token"))
@@ -100,3 +103,14 @@ func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(messages)
 }
+
+// func MessageGetAllAfterTime(w http.ResponseWriter, r *http.Request) {
+// 	// Validate token
+// 	id, err := validateToken(r.FormValue("token"))
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusBadRequest)
+// 		return
+// 	}
+// 	time = r.FormValue("time")
+
+// }
