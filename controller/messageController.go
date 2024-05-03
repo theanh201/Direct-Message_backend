@@ -13,7 +13,7 @@ import (
 
 var onlineConn = make(map[int]*websocket.Conn)
 
-func MessagePostFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
+func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 	// Web socket upgrade
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
