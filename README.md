@@ -119,5 +119,5 @@ if other user are online, message are dilivered to the other user
 ### Get message after time
 This is for when you get back from offline
 ``` bash
-curl -X GET -F 'time=2000-01-02 15:04:05'-F 'token=12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9' localhost:8080/get-all-message-after-time
+curl -X GET -F 'time=2024-05-03 20:57:28' -F 'token=12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9' localhost:8080/get-all-message-after-time
 ```

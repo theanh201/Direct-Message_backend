@@ -46,6 +46,6 @@ func main() {
 	// Send message unencrypt to friend
 	router.HandleFunc("/send-message-friend-unencrypt", controller.MessageFriendUnencrypt)
 	// Get all message after time frame
-	// router.HandleFunc("/get-all-message-after-time", controller.MessageGetAllAfterTime).Methods("GET")
+	router.HandleFunc("/get-all-message-after-time", controller.MessageGetAllAfterTime).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

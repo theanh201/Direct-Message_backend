@@ -104,13 +104,18 @@ func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(messages)
 }
 
-// func MessageGetAllAfterTime(w http.ResponseWriter, r *http.Request) {
-// 	// Validate token
-// 	id, err := validateToken(r.FormValue("token"))
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-// 	time = r.FormValue("time")
-
-// }
+func MessageGetAllAfterTime(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	id, err := validateToken(r.FormValue("token"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	time := r.FormValue("time")
+	messages, err := model.MessageGetAllAfterTime(id, time)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(messages)
+}
