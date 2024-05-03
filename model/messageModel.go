@@ -5,7 +5,7 @@ import (
 	"database/sql"
 )
 
-func MessagePostFriendUnencrypt(idFrom int, idTo int, timeNow string, content string) (err error) {
+func MessageFriendUnencrypt(idFrom int, idTo int, timeNow string, content string) (err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)
 	if err != nil {

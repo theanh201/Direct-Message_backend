@@ -67,7 +67,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		// Upload to db
-		err = model.MessagePostFriendUnencrypt(idFrom, idTo, timeNow, message.Content)
+		err = model.MessageFriendUnencrypt(idFrom, idTo, timeNow, message.Content)
 		if err != nil {
 			conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 			break
