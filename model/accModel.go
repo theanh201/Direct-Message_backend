@@ -122,32 +122,18 @@ func AccGetByName(name string, page int) (result []entities.AccountInfoExcludePr
 	// Get info
 	name = name + "%"
 	page *= 10
-	if page == 0 {
-		rows, err := db.Query("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE ? AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0 LIMIT 10", name)
-		if err != nil {
+	// Query
+	rows, err := db.Query("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE ? AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0 LIMIT 10 OFFSET ?", name, page)
+	if err != nil {
+		return result, err
+	}
+	defer rows.Close()
+	var info entities.AccountInfoExcludePrivateStatus
+	for rows.Next() {
+		if err := rows.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
 			return result, err
 		}
-		defer rows.Close()
-		var info entities.AccountInfoExcludePrivateStatus
-		for rows.Next() {
-			if err := rows.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
-				return result, err
-			}
-			result = append(result, info)
-		}
-	} else {
-		rows, err := db.Query("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE ? AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0 LIMIT 10 OFFSET ?", name, page)
-		if err != nil {
-			return result, err
-		}
-		defer rows.Close()
-		var info entities.AccountInfoExcludePrivateStatus
-		for rows.Next() {
-			if err := rows.Scan(&info.Email, &info.Name, &info.Avatar, &info.Background); err != nil {
-				return result, err
-			}
-			result = append(result, info)
-		}
+		result = append(result, info)
 	}
 	return result, err
 }
