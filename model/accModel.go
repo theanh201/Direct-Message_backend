@@ -120,7 +120,7 @@ func AccGetByName(name string, page int) (result []entities.AccountInfoExcludePr
 		return result, err
 	}
 	// Get info
-	name = name + "%"
+	name = "%" + name + "%"
 	page *= 10
 	// Query
 	rows, err := db.Query("SELECT USER_EMAIL, USER_NAME, USER_AVATAR, USER_BACKGROUND FROM USER WHERE USER_NAME LIKE ? AND USER_IS_PRIVATE = 0 AND USER_IS_DEL = 0 LIMIT 10 OFFSET ?", name, page)
