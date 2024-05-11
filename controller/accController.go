@@ -73,8 +73,7 @@ func AccPostRegister(w http.ResponseWriter, r *http.Request) {
 	// Check if user already exsist
 	_, id, _ := model.AccGetUserPassword(creds.Email)
 	if id != -1 {
-		response := map[string]string{"message": "username already exsist"}
-		json.NewEncoder(w).Encode(response)
+		http.Error(w, "username already exsist", http.StatusBadRequest)
 		return
 	}
 	// Validate password
