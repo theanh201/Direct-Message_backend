@@ -40,7 +40,7 @@ func main() {
 	// Reject friend request
 	router.HandleFunc("/reject-friend-request", controller.FriendRequestPostReject).Methods("POST")
 	// Get friend list
-	router.HandleFunc("/get-friend-list", controller.FriendGet).Methods("GET")
+	router.HandleFunc("/get-friend-list", controller.FriendGet).Methods("POST")
 	// Get all message
 	router.HandleFunc("/get-all-message", controller.MessageGetAll).Methods("GET")
 	// Send message unencrypt to friend
