@@ -59,12 +59,12 @@ curl -X DELETE -F 'email=user1@mail.com' -F 'password=12a60f274133d470bd1435a8e8
 ### Search by name
 This will return users but not return private users
 ``` bash
-curl -X GET -F 'name=user' -F 'page=0' -F 'token=12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9' localhost:8080/get-by-name
+curl -X GET localhost:8080/get-by-name/a552f4baed1aa0f7d5a181fcd52fc54d3a60444bc4fef56e1b2c5fd8c74349eb/user/0
 ```
 ### Search by email
 This will return a user even if that user are private
 ``` bash
-curl -X GET -F 'email=user2@mail.com' -F 'token=01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d6ae36a' localhost:8080/get-by-email
+curl -X GET localhost:8080/get-by-email/a552f4baed1aa0f7d5a181fcd52fc54d3a60444bc4fef56e1b2c5fd8c74349eb/user2@mail.com
 ```
 ## Friend request stuff
 ### Get prekey bundle

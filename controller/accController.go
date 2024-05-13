@@ -144,13 +144,13 @@ func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 
 func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	_, err := validateToken(r.FormValue("token"))
+	_, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get page
-	page, err := strconv.Atoi(r.FormValue("page"))
+	page, err := strconv.Atoi(mux.Vars(r)["page"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -160,7 +160,7 @@ func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Search by name
-	name := r.FormValue("name")
+	name := mux.Vars(r)["name"]
 	if len(name) > 64 {
 		http.Error(w, "len(name) not <= 64", http.StatusBadRequest)
 	}
@@ -174,13 +174,13 @@ func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
 
 func AccGetUserByEmail(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	_, err := validateToken(r.FormValue("token"))
+	_, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Search by name
-	email := r.FormValue("email")
+	email := mux.Vars(r)["email"]
 	if !validMail(email) {
 		http.Error(w, "valid email not found", http.StatusBadRequest)
 	}

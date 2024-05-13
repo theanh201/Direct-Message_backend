@@ -17,8 +17,8 @@ func main() {
 	router.HandleFunc("/get-self-info", controller.AccGetSelfInfo).Methods("GET")
 	router.HandleFunc("/get-avatar/{token}/{imgName}", controller.AccGetAvatar).Methods("GET")
 	router.HandleFunc("/get-background/{token}/{imgName}", controller.AccGetBackGround).Methods("GET")
-	router.HandleFunc("/get-by-name", controller.AccGetUserByName).Methods("GET")
-	router.HandleFunc("/get-by-email", controller.AccGetUserByEmail).Methods("GET")
+	router.HandleFunc("/get-by-name/{token}/{name}/{page}", controller.AccGetUserByName).Methods("GET")
+	router.HandleFunc("/get-by-email/{token}/{email}", controller.AccGetUserByEmail).Methods("GET")
 	// Account put
 	router.HandleFunc("/update-avatar", controller.AccPutAvatar).Methods("PUT")
 	router.HandleFunc("/update-background", controller.AccPutBackground).Methods("PUT")
