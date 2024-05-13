@@ -25,6 +25,26 @@ case $options in
         token3=$(echo "$data" | jq -r '.token')
         echo "--------------------------------------------"
 
+        echo "user1 update avatar"
+        curl_command="curl -X PUT -F 'avatar=@/home/admin/Pictures/Wallpapers/windowChan.jpg' -F 'token=${token1}' localhost:8080/update-avatar"
+        eval "$curl_command"
+        echo "user2 update avatar"
+        curl_command="curl -X PUT -F 'avatar=@/home/admin/Pictures/Wallpapers/windowChan.jpg' -F 'token=${token2}' localhost:8080/update-avatar"
+        eval "$curl_command"
+        echo "user3 update avatar"
+        curl_command="curl -X PUT -F 'avatar=@/home/admin/Pictures/Wallpapers/windowChan.jpg' -F 'token=${token3}' localhost:8080/update-avatar"
+        eval "$curl_command"
+
+        echo "user1 update background"
+        curl_command="curl -X PUT -F 'background=@/home/admin/Pictures/Wallpapers/windowChan.jpg' -F 'token=${token1}' localhost:8080/update-background"
+        eval "$curl_command"
+        echo "user1 update background"
+        curl_command="curl -X PUT -F 'background=@/home/admin/Pictures/Wallpapers/windowChan.jpg' -F 'token=${token2}' localhost:8080/update-background"
+        eval "$curl_command"
+        echo "user3 update background"
+        curl_command="curl -X PUT -F 'background=@/home/admin/Pictures/Wallpapers/windowChan.jpg' -F 'token=${token3}' localhost:8080/update-background"  
+        eval "$curl_command"
+
         echo "user1 update keybundle"
         curl_command="curl -X PUT -F 'ik=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933880' -F 'spk=d50ffb8450fc139576ff1efe893f23963e2be19d738080ac260d0bd148933881' -F 'opk=1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9,2782c5f8c4392877f28e1473ae454ae663a05a3ef5ea962c89707f7a99a429d9,2782c5f8c4392877f28e1473ae454ae663a05a3ef5ea962c89707f7a99a429d8,1762c5f8c4392877828e1473ae454ae663a05a3ef5ea962c89707f7a99a429d4,d779737d73332c2db9e7c709019a2626970a0f162b3fa4c0fe57b88fed1d9c82' -F 'token=${token1}' localhost:8080/update-prekey-bundle"
         eval "$curl_command"

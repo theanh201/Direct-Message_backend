@@ -2,11 +2,11 @@
 ## Account stuff
 ### Register
 ``` bash
-curl -X POST -H "Content-Type: application/json" -d '{"username":"user2@mail.com", "password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' http://localhost:8080/register
+curl -X POST -H "Content-Type: application/json" -d '{"username":"user2@mail.com", "password":"6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"}' http://localhost:8080/register
 ```
 ### Login
 ``` bash
-curl -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' http://localhost:8080/login
+curl -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"}' http://localhost:8080/login
 ```
 ### Update prekey bundle
 You need to update prekey bundle, this require ik, spk, and 5 opk
@@ -43,12 +43,12 @@ curl -X GET -F 'token=01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d
 ```
 ### Get avatar
 ``` bash
-curl -X GET -F 'imgName=1.jpg' -F 'token=c8ff7675fcac9a4bec35759751f4315a3a79b8126f906ef012cb5bbdff03acaa' localhost:8080/get-avatar --output 1.jpg
+curl -X GET localhost:8080/get-avatar/a552f4baed1aa0f7d5a181fcd52fc54d3a60444bc4fef56e1b2c5fd8c74349eb/2.jpg --output 1.jpg
 ```
 ### Get background
 ``` bash
 // Get background
-curl -X GET -F 'imgName=1.jpg' -F 'token=aa5d73f34c3f0f2ad080101bba90f13bdd8cdb1f16ada718ff7c743a3ffb540f' localhost:8080/get-background --output 1.jpg
+curl -X GET localhost:8080/get-background/a552f4baed1aa0f7d5a181fcd52fc54d3a60444bc4fef56e1b2c5fd8c74349eb/2.jpg --output 1.jpg
 ```
 ### Delete your account
 You will need to resend email and password, afterward you token and account will be mark as delete
