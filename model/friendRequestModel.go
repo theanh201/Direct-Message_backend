@@ -42,7 +42,19 @@ func FriendRequestUpdateReject(email string, id int) (err error) {
 	if err != nil {
 		return err
 	}
-	rows, err := db.Query("UPDATE USER_FRIEND_REQUEST SET USER_FRIEND_REQUEST_IS_DEL=1 WHERE USER_ID_TO=? AND USER_ID_FROM=?", id, id2)
+	// check if entry exsist
+	rows, err := db.Query("SELECT USER_FRIEND_REQUEST_IS_DEL FROM USER_FRIEND_REQUEST WHERE USER_ID_TO=? AND USER_ID_FROM=?", id, id2)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	rows.Next()
+	var temp []byte
+	if err := rows.Scan(&temp); err != nil {
+		return err
+	}
+	// update entry
+	rows, err = db.Query("UPDATE USER_FRIEND_REQUEST SET USER_FRIEND_REQUEST_IS_DEL=1 WHERE USER_ID_TO=? AND USER_ID_FROM=?", id, id2)
 	if err != nil {
 		return err
 	}
