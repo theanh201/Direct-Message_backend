@@ -69,7 +69,7 @@ curl -X GET localhost:8080/get-by-email/a552f4baed1aa0f7d5a181fcd52fc54d3a60444b
 ## Friend request stuff
 ### Get prekey bundle
 ``` bash
-curl -X GET -F 'email=user1@mail.com' -F 'token=e89b6a8f11494ffc94399f6bdacaa30eb5a783327c88c8cbc878c792bd4dca29' localhost:8080/get-prekey-bundle
+curl -X GET localhost:8080/get-prekey-bundle/1c68980897d4910b24ea1ca2c902d6dbefa7dffb09220833a5c0de0d6f2f28e8/user1@mail.com
 ```
 ### Send a friend request
 In this request opk can be empty
@@ -78,7 +78,7 @@ curl -X POST -F 'toEmail=user1@mail.com' -F'ek=7fb26648cca726f2cce63eda8e92e2206
 ```
 ### List all friend request you have
 ``` bash 
-curl -X GET -F 'token=1777593ba77e512e72a750a90f7ab85a50d729d7d2fdb30984be02dd361e111d' localhost:8080/get-friend-request
+curl -X GET localhost:8080/get-friend-request/1c68980897d4910b24ea1ca2c902d6dbefa7dffb09220833a5c0de0d6f2f28e8
 ```
 ### Accept friend request
 ``` bash
@@ -96,10 +96,11 @@ curl -X GET -F localhost:8080/get-friend-list/01f36eb7afe7a112e019fb7f494ca5219a
 ### Get all your message
 This shold be run when you have a new device and need all old message
 ``` bash
-curl -X GET -F 'token=12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9' localhost:8080/get-all-message
+curl -X GET localhost:8080/get-all-message/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9
 ```
 ### Send message friend unencrypt
 This api is for messaging with websocket, before sending anymessage you need to add youself to the online list of the server by sending a json file with you token like this
+localhost:8080/send-message-friend-unencrypt
 ``` json
 {
     "case":0,
@@ -119,5 +120,5 @@ if other user are online, message are dilivered to the other user
 ### Get message after time
 This is for when you get back from offline
 ``` bash
-curl -X GET -F 'time=2024-05-03 20:57:28' -F 'token=12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9' localhost:8080/get-all-message-after-time
+curl -X GET localhost:8080/get-all-message-after-time/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/2024-05-03 20:57:28
 ```

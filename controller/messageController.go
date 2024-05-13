@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -90,7 +91,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 // GET
 func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	id, err := validateToken(r.FormValue("token"))
+	id, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -106,12 +107,12 @@ func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 
 func MessageGetAllAfterTime(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	id, err := validateToken(r.FormValue("token"))
+	id, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	time := r.FormValue("time")
+	time := mux.Vars(r)["time"]
 	messages, err := model.MessageGetAllAfterTime(id, time)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

@@ -1,5 +1,4 @@
-echo "1. Test add friend user2,3 add friend user1
-2. Sent message test"
+echo "1. Test add friend user2,3 add friend user1"
 echo -n "Select your option: "
 read options
 case $options in
@@ -59,12 +58,12 @@ case $options in
         echo "--------------------------------------------"
 
         echo "user2 get user1 keybundle"
-        curl_command="curl --no-progress-meter -X GET -F 'email=user1@mail.com' -F 'token=${token2}' localhost:8080/get-prekey-bundle"
+        curl_command="curl -X GET localhost:8080/get-prekey-bundle/${token2}/user1@mail.com"
         data=$(eval "$curl_command")
         opk_user1_1=$(echo "$data" | jq -r '.Opk')
 
         echo "user3 get user1 keybundle"
-        curl_command="curl --no-progress-meter -X GET -F 'email=user1@mail.com' -F 'token=${token3}' localhost:8080/get-prekey-bundle"
+        curl_command="curl -X GET localhost:8080/get-prekey-bundle/${token3}/user1@mail.com"
         data=$(eval "$curl_command")
         opk_user1_2=$(echo "$data" | jq -r '.Opk')
         echo "--------------------------------------------"
@@ -94,30 +93,20 @@ case $options in
         echo "user1 friend list"
         curl_command="curl -X GET localhost:8080/get-friend-list/${token1}"
         eval "$curl_command"
-    ;;
-    2)
-        echo "Login user1@mail.com"
-        data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' http://localhost:8080/login)
-        token1=$(echo "$data" | jq -r '.token')
-        ee
-        echo "Login user2@mail.com"
-        data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user2@mail.com", "password":"12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9"}' http://localhost:8080/login)
-        token2=$(echo "$data" | jq -r '.token')
-        echo "--------------------------------------------"
-
-        echo "User1 send message"
-        curl_command="curl -X POST -F 'email=user2@mail.com' -F 'content=@/home/admin/Downloads/text1.txt' -F 'token=${token1}' localhost:8080/send-message-friend-unencrypt"
-        eval "$curl_command"
-        echo "User2 send message"
-        curl_command="curl -X POST -F 'email=user1@mail.com' -F 'content=@/home/admin/Downloads/text1.txt' -F 'token=${token2}' localhost:8080/send-message-friend-unencrypt"
-        eval "$curl_command"
-        echo "--------------------------------------------"
 
         echo "user1 get all message"
-        curl_command="curl -X GET -F 'token=${token1}' localhost:8080/get-all-message"
+        curl_command="curl -X GET localhost:8080/get-all-message/${token1}"
         eval "$curl_command"
         echo "user2 get all message"
-        curl_command="curl -X GET -F 'token=${token2}' localhost:8080/get-all-message"
+        curl_command="curl -X GET localhost:8080/get-all-message/${token2}"
+        eval "$curl_command"
+        echo "--------------------------------------------"
+
+        echo "user1 get message after"
+        curl_command="curl -X GET localhost:8080/get-all-message/${token1}"
+        eval "$curl_command"
+        echo "user2 get message after"
+        curl_command="curl -X GET localhost:8080/get-all-message/${token2}"
         eval "$curl_command"
         echo "--------------------------------------------"
     ;;

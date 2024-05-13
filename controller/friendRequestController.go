@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // POST
@@ -102,7 +104,7 @@ func FriendRequestPostReject(w http.ResponseWriter, r *http.Request) {
 // GET
 func FriendRequestGet(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	id, err := validateToken(r.FormValue("token"))
+	id, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

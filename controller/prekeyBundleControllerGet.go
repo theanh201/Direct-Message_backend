@@ -6,18 +6,20 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 // GET
 func PrekeyBundleGet(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	_, err := validateToken(r.FormValue("token"))
+	_, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// getKeyBundle
-	userEmail := r.FormValue("email")
+	userEmail := mux.Vars(r)["email"]
 	if !validMail(userEmail) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return

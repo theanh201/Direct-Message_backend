@@ -29,12 +29,12 @@ func main() {
 	// Account delete
 	router.HandleFunc("/delete-self", controller.AccDeleteSelf).Methods("DELETE")
 	// Prekey bundle
-	router.HandleFunc("/get-prekey-bundle", controller.PrekeyBundleGet).Methods("GET")
+	router.HandleFunc("/get-prekey-bundle/{token}/{email}", controller.PrekeyBundleGet).Methods("GET")
 	router.HandleFunc("/update-prekey-bundle", controller.PrekeyBundlePut).Methods("PUT")
 	// Add Friend Request
 	router.HandleFunc("/add-friend-request", controller.FriendRequestPost).Methods("POST")
 	// Get friendRequest
-	router.HandleFunc("/get-friend-request", controller.FriendRequestGet).Methods("GET")
+	router.HandleFunc("/get-friend-request/{token}", controller.FriendRequestGet).Methods("GET")
 	// Accept friend request
 	router.HandleFunc("/accept-friend-request", controller.FriendRequestPostAccept).Methods("POST")
 	// Reject friend request
@@ -42,10 +42,10 @@ func main() {
 	// Get friend list
 	router.HandleFunc("/get-friend-list/{token}", controller.FriendGet).Methods("GET")
 	// Get all message
-	router.HandleFunc("/get-all-message", controller.MessageGetAll).Methods("GET")
+	router.HandleFunc("/get-all-message/{token}", controller.MessageGetAll).Methods("GET")
 	// Send message unencrypt to friend
 	router.HandleFunc("/send-message-friend-unencrypt", controller.MessageFriendUnencrypt)
 	// Get all message after time frame
-	router.HandleFunc("/get-all-message-after-time", controller.MessageGetAllAfterTime).Methods("GET")
+	router.HandleFunc("/get-all-message-after-time/{token}/{time}", controller.MessageGetAllAfterTime).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
