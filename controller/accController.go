@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 // POST
@@ -112,13 +114,13 @@ func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 
 func AccGetAvatar(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	id, err := validateToken(r.FormValue("token"))
+	id, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get image if imgId = tokenId
-	imgName := r.FormValue("imgName")
+	imgName := mux.Vars(r)["imgName"]
 	imgId, err := strconv.Atoi(strings.Split(imgName, ".")[0])
 	if err != nil {
 		http.Error(w, "fail to extract id from image name", http.StatusBadRequest)
@@ -192,13 +194,13 @@ func AccGetUserByEmail(w http.ResponseWriter, r *http.Request) {
 
 func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	id, err := validateToken(r.FormValue("token"))
+	id, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get image if imgId = tokenId
-	imgName := r.FormValue("imgName")
+	imgName := mux.Vars(r)["imgName"]
 	imgId, err := strconv.Atoi(strings.Split(imgName, ".")[0])
 	if err != nil {
 		http.Error(w, "fail to extract id from image", http.StatusBadRequest)
