@@ -11,14 +11,14 @@ import (
 func main() {
 	router := mux.NewRouter()
 	// Account post
-	router.HandleFunc("/login", controller.AccPostLogin).Methods("POST")
-	router.HandleFunc("/register", controller.AccPostRegister).Methods("POST")
+	router.HandleFunc("/login", controller.AccPostLogin).Methods("POST")       // done
+	router.HandleFunc("/register", controller.AccPostRegister).Methods("POST") // done
 	// Account get
 	router.HandleFunc("/get-self-info", controller.AccGetSelfInfo).Methods("GET")
-	router.HandleFunc("/get-avatar/{token}/{imgName}", controller.AccGetAvatar).Methods("GET")
-	router.HandleFunc("/get-background/{token}/{imgName}", controller.AccGetBackGround).Methods("GET")
-	router.HandleFunc("/get-by-name/{token}/{name}/{page}", controller.AccGetUserByName).Methods("GET")
-	router.HandleFunc("/get-by-email/{token}/{email}", controller.AccGetUserByEmail).Methods("GET")
+	router.HandleFunc("/get-avatar/{token}/{imgName}", controller.AccGetAvatar).Methods("GET")          // done
+	router.HandleFunc("/get-background/{token}/{imgName}", controller.AccGetBackGround).Methods("GET")  // done
+	router.HandleFunc("/get-by-name/{token}/{name}/{page}", controller.AccGetUserByName).Methods("GET") // done
+	router.HandleFunc("/get-by-email/{token}/{email}", controller.AccGetUserByEmail).Methods("GET")     // done
 	// Account put
 	router.HandleFunc("/update-avatar", controller.AccPutAvatar).Methods("PUT")
 	router.HandleFunc("/update-background", controller.AccPutBackground).Methods("PUT")
@@ -29,10 +29,10 @@ func main() {
 	// Account delete
 	router.HandleFunc("/delete-self", controller.AccDeleteSelf).Methods("DELETE")
 	// Prekey bundle
-	router.HandleFunc("/get-prekey-bundle/{token}/{email}", controller.PrekeyBundleGet).Methods("GET")
+	router.HandleFunc("/get-prekey-bundle/{token}/{email}", controller.PrekeyBundleGet).Methods("GET") // done
 	router.HandleFunc("/update-prekey-bundle", controller.PrekeyBundlePut).Methods("PUT")
 	// Add Friend Request
-	router.HandleFunc("/add-friend-request", controller.FriendRequestPost).Methods("POST")
+	router.HandleFunc("/add-friend-request", controller.FriendRequestPost).Methods("POST") // done
 	// Get friendRequest
 	router.HandleFunc("/get-friend-request/{token}", controller.FriendRequestGet).Methods("GET")
 	// Accept friend request
@@ -40,7 +40,7 @@ func main() {
 	// Reject friend request
 	router.HandleFunc("/reject-friend-request", controller.FriendRequestPostReject).Methods("POST")
 	// Get friend list
-	router.HandleFunc("/get-friend-list/{token}", controller.FriendGet).Methods("GET")
+	router.HandleFunc("/get-friend-list/{token}", controller.FriendGet).Methods("GET") // done
 	// Get all message
 	router.HandleFunc("/get-all-message/{token}", controller.MessageGetAll).Methods("GET")
 	// Send message unencrypt to friend

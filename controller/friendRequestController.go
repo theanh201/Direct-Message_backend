@@ -28,16 +28,20 @@ func FriendRequestPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if toId == fromId {
+		http.Error(w, "You cant add friend with your self", http.StatusBadRequest)
+		return
+	}
 	// Get ek
 	ek, err := convert32Byte(r.FormValue("ek"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid ek", http.StatusBadRequest)
 		return
 	}
 	// Get opk used
 	opkUsed, err := convert32Byte(r.FormValue("opkUsed"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid opkUsed", http.StatusBadRequest)
 		return
 	}
 	err = model.FriendRequestAdd(fromId, toId, ek, opkUsed)

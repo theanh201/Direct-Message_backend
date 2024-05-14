@@ -44,7 +44,7 @@ func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 	// Update IK
 	ik, err := convert32Byte(r.FormValue("ik"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid ik", http.StatusBadRequest)
 	}
 	err = model.KeyBundleUpdateIk(id, ik)
 	if err != nil {
@@ -54,7 +54,7 @@ func PrekeyBundlePut(w http.ResponseWriter, r *http.Request) {
 	// Update SPK
 	spk, err := convert32Byte(r.FormValue("spk"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid spk", http.StatusBadRequest)
 	}
 	err = model.KeyBundleUpdateSpk(id, spk)
 	if err != nil {
