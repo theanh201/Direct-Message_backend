@@ -159,6 +159,8 @@ func KeyBundleGetIk(id int) (ik string, err error) {
 	}
 	defer rows.Close()
 	rows.Next()
-	err = rows.Scan(&ik)
+	var tempIk []byte
+	err = rows.Scan(&tempIk)
+	ik = hex.EncodeToString(tempIk)
 	return ik, err
 }
