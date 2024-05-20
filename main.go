@@ -34,11 +34,11 @@ func main() {
 	// Add Friend Request
 	router.HandleFunc("/add-friend-request", controller.FriendRequestPost).Methods("POST") // done
 	// Get friendRequest
-	router.HandleFunc("/get-friend-request/{token}", controller.FriendRequestGet).Methods("GET")
+	router.HandleFunc("/get-friend-request/{token}", controller.FriendRequestGet).Methods("GET") //done
 	// Accept friend request
-	router.HandleFunc("/accept-friend-request", controller.FriendRequestPostAccept).Methods("POST")
+	router.HandleFunc("/accept-friend-request", controller.FriendRequestPostAccept).Methods("POST") // done
 	// Reject friend request
-	router.HandleFunc("/reject-friend-request", controller.FriendRequestPostReject).Methods("POST")
+	router.HandleFunc("/reject-friend-request", controller.FriendRequestPostReject).Methods("POST") // done
 	// Get friend list
 	router.HandleFunc("/get-friend-list/{token}", controller.FriendGet).Methods("GET") // done
 	// Get all message
