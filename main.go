@@ -27,7 +27,7 @@ func main() {
 	router.HandleFunc("/update-name", controller.AccPutName).Methods("PUT")
 	router.HandleFunc("/update-private-status", controller.AccPutPrivateStatus).Methods("PUT")
 	// Account delete
-	router.HandleFunc("/delete-self", controller.AccDeleteSelf).Methods("DELETE")
+	router.HandleFunc("/delete-self/{token}/{email}/{password}", controller.AccDeleteSelf).Methods("DELETE")
 	// Prekey bundle
 	router.HandleFunc("/get-prekey-bundle/{token}/{email}", controller.PrekeyBundleGet).Methods("GET") // done
 	router.HandleFunc("/update-prekey-bundle", controller.PrekeyBundlePut).Methods("PUT")

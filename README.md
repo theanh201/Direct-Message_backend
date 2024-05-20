@@ -53,7 +53,7 @@ curl -X GET localhost:8080/get-background/a552f4baed1aa0f7d5a181fcd52fc54d3a6044
 ### Delete your account
 You will need to resend email and password, afterward you token and account will be mark as delete
 ``` bash
-curl -X DELETE -F 'email=user1@mail.com' -F 'password=12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9' -F 'token=c8ff7675fcac9a4bec35759751f4315a3a79b8126f906ef012cb5bbdff03acaa' localhost:8080/delete-self
+curl -X DELETE localhost:8080/delete-self/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/user1@mail.com/6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b
 ```
 ## Search friend stuff
 ### Search by name

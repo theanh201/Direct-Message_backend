@@ -419,19 +419,19 @@ func AccPutPrivateStatus(w http.ResponseWriter, r *http.Request) {
 // DELETE
 func AccDeleteSelf(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	id1, err := validateToken(r.FormValue("token"))
+	id1, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Validate email
-	email := r.FormValue("email")
+	email := mux.Vars(r)["email"]
 	if !validMail(email) {
 		http.Error(w, "Not valid email found", http.StatusBadRequest)
 		return
 	}
 	// Validate Password
-	password := r.FormValue("password")
+	password := mux.Vars(r)["password"]
 	if len(password) != 64 {
 		http.Error(w, "", http.StatusBadRequest)
 		return
