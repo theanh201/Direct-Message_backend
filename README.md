@@ -39,7 +39,7 @@ curl -X PUT -F 'isPrivate=1' -F 'token=01f36eb7afe7a112e019fb7f494ca5219aefb1668
 ```
 ### Get self info
 ``` bash
-curl -X GET -F 'token=01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d6ae36a' localhost:8080/get-self-info
+curl -X GET localhost:8080/get-self-info/a777559c23007158a03c7a55a382d5906b8a758935af6a36c3244883708d5992
 ```
 ### Get avatar
 ``` bash

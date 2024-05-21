@@ -97,7 +97,7 @@ func AccPostRegister(w http.ResponseWriter, r *http.Request) {
 // GET
 func AccGetSelfInfo(w http.ResponseWriter, r *http.Request) {
 	// Validate token
-	id, err := validateToken(r.FormValue("token"))
+	id, err := validateToken(mux.Vars(r)["token"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
