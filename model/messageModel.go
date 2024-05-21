@@ -24,6 +24,25 @@ func MessageFriendUnencrypt(idFrom int, idTo int, timeNow string, content string
 	defer rows.Close()
 	return err
 }
+func MessageFriendEncrypt(idFrom int, idTo int, timeNow string, content string) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	// Insert message
+	rows, err := db.Query("INSERT INTO MESSAGE(USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE) VALUES (?,?,?,?,1, 0)", idFrom, idTo, content, timeNow)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	return err
+}
 func MessageGetAll(id int) (messages []entities.Message, err error) {
 	// Check DB
 	db, err := sql.Open("mysql", Direct_Backend_DB)

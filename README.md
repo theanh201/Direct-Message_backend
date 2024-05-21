@@ -116,6 +116,15 @@ after that you can start sending message
     "email":"user1@mail.com"
 }
 ```
+send encrypt message
+``` json
+{
+    "case":2,
+    "token":"your_token_is_here",
+    "content":"this_is_my_message",
+    "email":"user1@mail.com"
+}
+```
 if other user are online, message are dilivered to the other user
 ### Get message after time
 This is for when you get back from offline

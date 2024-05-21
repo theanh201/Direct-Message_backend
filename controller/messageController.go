@@ -4,6 +4,7 @@ import (
 	"DirectBackend/entities"
 	"DirectBackend/model"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -78,7 +79,81 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 			// Send to user if online
 			toConn, isOnline := onlineConn[idTo]
 			if isOnline {
-				err = toConn.WriteMessage(websocket.TextMessage, []byte(message.Content))
+				sender, err := model.AccGetInfo(idFrom)
+				if err != nil {
+					conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+					break
+				}
+				// Define your data
+				data := entities.Message{
+					IsEncrypt:     false,
+					IsFile:        false,
+					Content:       message.Content,
+					ReceiverEmail: message.Email,
+					SenderEmail:   sender.Email,
+					Since:         timeNow,
+				}
+				// Marshal data to JSON
+				jsonData, err := json.Marshal(data)
+				if err != nil {
+					fmt.Println("Error marshalling JSON:", err)
+					return
+				}
+				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
+				if err != nil {
+					conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
+				}
+			}
+		// send encrypt message
+		case 2:
+			// Get current time
+			timeNow := time.Now().Format("2006-01-02 15:04:05")
+			// Validate mail
+			if !validMail(message.Email) {
+				conn.WriteMessage(websocket.TextMessage, []byte("in valid mail"))
+				break
+			}
+			_, idTo, err := model.AccGetUserPassword(message.Email)
+			if err != nil {
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				break
+			}
+			// Check if 2 are friend
+			err = model.FriendCheck(idFrom, idTo)
+			if err != nil {
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				break
+			}
+			// Upload to db
+			err = model.MessageFriendEncrypt(idFrom, idTo, timeNow, message.Content)
+			if err != nil {
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				break
+			}
+			// Send to user if online
+			toConn, isOnline := onlineConn[idTo]
+			if isOnline {
+				sender, err := model.AccGetInfo(idFrom)
+				if err != nil {
+					conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+					break
+				}
+				// Define your data
+				data := entities.Message{
+					IsEncrypt:     true,
+					IsFile:        false,
+					Content:       message.Content,
+					ReceiverEmail: message.Email,
+					SenderEmail:   sender.Email,
+					Since:         timeNow,
+				}
+				// Marshal data to JSON
+				jsonData, err := json.Marshal(data)
+				if err != nil {
+					fmt.Println("Error marshalling JSON:", err)
+					return
+				}
+				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
 				if err != nil {
 					conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
 				}
