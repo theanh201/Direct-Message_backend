@@ -76,6 +76,8 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 				break
 			}
+			// Send time to sender
+			conn.WriteMessage(websocket.TextMessage, []byte(timeNow))
 			// Send to user if online
 			toConn, isOnline := onlineConn[idTo]
 			if isOnline {
