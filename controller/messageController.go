@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -78,6 +79,8 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 				break
 			}
+			// Send time to sender
+			conn.WriteMessage(websocket.TextMessage, []byte(timeNow))
 			// Send to user if online
 			toConn, isOnline := onlineConn[idTo]
 			if isOnline {
@@ -99,7 +102,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 				jsonData, err := json.Marshal(data)
 				if err != nil {
 					fmt.Println("Error marshalling JSON:", err)
-					return
+					break
 				}
 				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
 				// err = toConn.WriteJSON(jsonData)
@@ -154,7 +157,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 				jsonData, err := json.Marshal(data)
 				if err != nil {
 					fmt.Println("Error marshalling JSON:", err)
-					return
+					break
 				}
 				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
 				if err != nil {
@@ -167,6 +170,26 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET
+func MessageGetByEmail(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	id1, err := validateToken(mux.Vars(r)["token"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Get email
+	email := mux.Vars(r)["email"]
+	if !validMail(email) {
+		http.Error(w, "valid email not found", http.StatusBadRequest)
+		return
+	}
+	messages, err := model.MessageGetAfterTime(id1, email, "2000-01-01 20:00:00")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(messages)
+}
 func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	id, err := validateToken(mux.Vars(r)["token"])
@@ -182,7 +205,29 @@ func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(messages)
 }
-
+func MessageGetByEmailAfterTime(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	id, err := validateToken(mux.Vars(r)["token"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Get email
+	email := mux.Vars(r)["email"]
+	if !validMail(email) {
+		http.Error(w, "valid email not found", http.StatusBadRequest)
+		return
+	}
+	// Get time
+	time := mux.Vars(r)["time"]
+	time = strings.Replace(time, "_", " ", -1)
+	messages, err := model.MessageGetAfterTime(id, email, time)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(messages)
+}
 func MessageGetAllAfterTime(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	id, err := validateToken(mux.Vars(r)["token"])
@@ -191,10 +236,28 @@ func MessageGetAllAfterTime(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	time := mux.Vars(r)["time"]
+	time = strings.Replace(time, "_", " ", -1)
 	messages, err := model.MessageGetAllAfterTime(id, time)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	json.NewEncoder(w).Encode(messages)
+}
+func MessageDelete(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	id, err := validateToken(mux.Vars(r)["token"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	time := mux.Vars(r)["time"]
+	time = strings.Replace(time, "_", " ", -1)
+	err = model.MessageDelete(id, time)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response := map[string]string{"message": "delete success"}
+	json.NewEncoder(w).Encode(response)
 }

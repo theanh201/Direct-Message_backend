@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -24,7 +25,7 @@ func AccAddUser(email string, password []byte) error {
 		return err
 	}
 	// Add username and password to DB
-	rows, err := db.Query("INSERT INTO USER(USER_EMAIL, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES (?, ?, ?, '', '', 0, 0)", email, password, email)
+	rows, err := db.Query("INSERT INTO USER(USER_EMAIL, USER_PASSWORD, USER_NAME, USER_AVATAR, USER_BACKGROUND, USER_IS_PRIVATE, USER_IS_DEL) VALUES (?, ?, ?, '', '', 0, 0)", email, password, strings.Split(email, "@")[0])
 	if err != nil {
 		return err
 	}

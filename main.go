@@ -41,6 +41,8 @@ func main() {
 	router.HandleFunc("/reject-friend-request", controller.FriendRequestPostReject).Methods("POST") // done
 	// Get friend list
 	router.HandleFunc("/get-friend-list/{token}", controller.FriendGet).Methods("GET") // done
+	// Delete friend list
+	router.HandleFunc("/unfriend/{token}/{email}", controller.FriendDelete).Methods("DELETE")
 	// Get all message
 	router.HandleFunc("/get-all-message/{token}", controller.MessageGetAll).Methods("GET")
 	// Send message unencrypt to friend
@@ -49,5 +51,10 @@ func main() {
 	log.Println("Starting server on :8080")
 	// Get all message after time frame
 	router.HandleFunc("/get-all-message-after-time/{token}/{time}", controller.MessageGetAllAfterTime).Methods("GET")
+	// Delete message
+	router.HandleFunc("/delete-message/{token}/{time}", controller.MessageDelete).Methods("DELETE")
+	// Get all message by email
+	router.HandleFunc("/get-all-message-by-email/{token}/{email}", controller.MessageGetByEmail).Methods("GET")
+	router.HandleFunc("/get-all-message-by-email-after-time/{token}/{email}/{time}", controller.MessageGetByEmailAfterTime).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

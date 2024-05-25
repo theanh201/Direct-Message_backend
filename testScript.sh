@@ -78,13 +78,13 @@ case $options in
         data=$(eval "$curl_command")
         echo $data
 
-        # echo "user1 accept friend request from user2"
-        # curl_command="curl -X POST -F 'email=user2@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
-        # eval "$curl_command"
+        echo "user1 accept friend request from user2"
+        curl_command="curl -X POST -F 'email=user2@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
+        eval "$curl_command"
 
-        # echo "user1 accept friend request from user3"
-        # curl_command="curl -X POST -F 'email=user3@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
-        # eval "$curl_command"
+        echo "user1 accept friend request from user3"
+        curl_command="curl -X POST -F 'email=user3@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
+        eval "$curl_command"
 
         echo "user2 accept friend request from user3"
         curl_command="curl -X POST -F 'email=user3@mail.com' -F 'token=${token2}' localhost:8080/accept-friend-request"

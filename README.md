@@ -91,7 +91,11 @@ curl -X POST -F 'email=user2@mail.com' -F 'token=01f36eb7afe7a112e019fb7f494ca52
 ## Friend stuff
 ### List your friend
 ``` bash
-curl -X GET -F localhost:8080/get-friend-list/01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d6ae36a
+curl -X GET localhost:8080/get-friend-list/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9
+```
+### Unfriend
+``` bash
+curl -X DELETE localhost:8080/unfriend/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/user2@mail.com
 ```
 ### Get all your message
 This shold be run when you have a new device and need all old message
@@ -129,5 +133,17 @@ if other user are online, message are dilivered to the other user
 ### Get message after time
 This is for when you get back from offline
 ``` bash
-curl -X GET localhost:8080/get-all-message-after-time/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/2024-05-03 20:57:28
+curl -X GET localhost:8080/get-all-message-after-time/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/2024-05-03_20:57:28
+```
+### Get messages by email
+``` bash
+curl -X GET localhost:8080/get-all-message-by-email/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/user2@mail.com
+```
+### Get messages by email after time
+``` bash
+curl -X GET localhost:8080/get-all-message-by-email-after-time/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/user2@mail.com/2024-05-25_20:57:28
+```
+### Delete message
+``` bash
+curl -X DELETE localhost:8080/delete-message/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/2024-05-03_20:57:28
 ```
