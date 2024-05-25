@@ -31,7 +31,7 @@ func FriendDelete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// Search by name
+	// Get email
 	email := mux.Vars(r)["email"]
 	if !validMail(email) {
 		http.Error(w, "valid email not found", http.StatusBadRequest)

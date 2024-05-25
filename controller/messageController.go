@@ -167,6 +167,26 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET
+func MessageGetByEmail(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	id1, err := validateToken(mux.Vars(r)["token"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Get email
+	email := mux.Vars(r)["email"]
+	if !validMail(email) {
+		http.Error(w, "valid email not found", http.StatusBadRequest)
+		return
+	}
+	messages, err := model.MessageGetAfterTime(id1, email, "2000-01-01 20:00:00")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(messages)
+}
 func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	id, err := validateToken(mux.Vars(r)["token"])
@@ -182,7 +202,29 @@ func MessageGetAll(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(messages)
 }
-
+func MessageGetByEmailAfterTime(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	id, err := validateToken(mux.Vars(r)["token"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Get email
+	email := mux.Vars(r)["email"]
+	if !validMail(email) {
+		http.Error(w, "valid email not found", http.StatusBadRequest)
+		return
+	}
+	// Get time
+	time := mux.Vars(r)["time"]
+	time = strings.Replace(time, "_", " ", -1)
+	messages, err := model.MessageGetAfterTime(id, email, time)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(messages)
+}
 func MessageGetAllAfterTime(w http.ResponseWriter, r *http.Request) {
 	// Validate token
 	id, err := validateToken(mux.Vars(r)["token"])

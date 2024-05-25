@@ -135,6 +135,14 @@ This is for when you get back from offline
 ``` bash
 curl -X GET localhost:8080/get-all-message-after-time/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/2024-05-03_20:57:28
 ```
+### Get messages by email
+``` bash
+curl -X GET localhost:8080/get-all-message-by-email/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/user2@mail.com
+```
+### Get messages by email after time
+``` bash
+curl -X GET localhost:8080/get-all-message-by-email-after-time/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/user2@mail.com/2024-05-25_20:57:28
+```
 ### Delete message
 ``` bash
 curl -X DELETE localhost:8080/delete-message/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/2024-05-03_20:57:28

@@ -51,5 +51,8 @@ func main() {
 	router.HandleFunc("/get-all-message-after-time/{token}/{time}", controller.MessageGetAllAfterTime).Methods("GET")
 	// Delete message
 	router.HandleFunc("/delete-message/{token}/{time}", controller.MessageDelete).Methods("DELETE")
+	// Get all message by email
+	router.HandleFunc("/get-all-message-by-email/{token}/{email}", controller.MessageGetByEmail).Methods("GET")
+	router.HandleFunc("/get-all-message-by-email-after-time/{token}/{email}/{time}", controller.MessageGetByEmailAfterTime).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
