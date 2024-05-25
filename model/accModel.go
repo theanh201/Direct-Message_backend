@@ -9,7 +9,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var Direct_Backend_DB string = "user:password1234@tcp(127.0.0.1:3306)/Direct_Backend_DB"
+var Direct_Backend_DB string = "root:Python5979@tcp(localhost:3306)/CHATDB"
 
 // Add
 func AccAddUser(email string, password []byte) error {

@@ -44,7 +44,9 @@ func main() {
 	// Get all message
 	router.HandleFunc("/get-all-message/{token}", controller.MessageGetAll).Methods("GET")
 	// Send message unencrypt to friend
-	router.HandleFunc("/send-message-friend-unencrypt", controller.MessageFriendUnencrypt)
+	// router.HandleFunc("/send-message-friend-unencrypt", controller.MessageFriendUnencrypt)
+	router.HandleFunc("/ws", controller.MessageFriendUnencrypt)
+	log.Println("Starting server on :8080")
 	// Get all message after time frame
 	router.HandleFunc("/get-all-message-after-time/{token}/{time}", controller.MessageGetAllAfterTime).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
