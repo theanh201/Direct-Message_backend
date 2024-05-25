@@ -197,3 +197,21 @@ func MessageGetContentPermission(contentName string) (idFrom int, idTo int, err 
 	}
 	return idFrom, idTo, err
 }
+func MessageDelete(id int, time string) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	rows, err := db.Query("UPDATE MESSAGE SET MESSAGE_CONTENT='Deleted' WHERE USER_ID_FROM=? AND MESSAGE_SINCE=?", id, time)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	return err
+}

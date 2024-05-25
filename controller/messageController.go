@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -190,10 +191,28 @@ func MessageGetAllAfterTime(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	time := mux.Vars(r)["time"]
+	time = strings.Replace(time, "_", " ", -1)
 	messages, err := model.MessageGetAllAfterTime(id, time)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	json.NewEncoder(w).Encode(messages)
+}
+func MessageDelete(w http.ResponseWriter, r *http.Request) {
+	// Validate token
+	id, err := validateToken(mux.Vars(r)["token"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	time := mux.Vars(r)["time"]
+	time = strings.Replace(time, "_", " ", -1)
+	err = model.MessageDelete(id, time)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response := map[string]string{"message": "delete success"}
+	json.NewEncoder(w).Encode(response)
 }

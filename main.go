@@ -49,5 +49,7 @@ func main() {
 	router.HandleFunc("/send-message-friend-unencrypt", controller.MessageFriendUnencrypt)
 	// Get all message after time frame
 	router.HandleFunc("/get-all-message-after-time/{token}/{time}", controller.MessageGetAllAfterTime).Methods("GET")
+	// Delete message
+	router.HandleFunc("/delete-message/{token}/{time}", controller.MessageDelete).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
