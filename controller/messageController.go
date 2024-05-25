@@ -24,6 +24,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
+
 	var idFrom int
 	for {
 		// Read message from client
@@ -32,6 +33,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			break
 		}
+		log.Printf("recv: %s", jsonMessage)
 		// Decode message
 		var message entities.WebsocketMessage
 		err = json.Unmarshal(jsonMessage, &message)
@@ -100,6 +102,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
+				// err = toConn.WriteJSON(jsonData)
 				if err != nil {
 					conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
 				}
