@@ -91,7 +91,11 @@ curl -X POST -F 'email=user2@mail.com' -F 'token=01f36eb7afe7a112e019fb7f494ca52
 ## Friend stuff
 ### List your friend
 ``` bash
-curl -X GET -F localhost:8080/get-friend-list/01f36eb7afe7a112e019fb7f494ca5219aefb1668115d5e1a1494eb85d6ae36a
+curl -X GET localhost:8080/get-friend-list/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9
+```
+### Unfriend
+``` bash
+curl -X DELETE localhost:8080/unfriend/12a60f274133d470bd1435a8e845d7f501950452440018f110f85480670d20f9/user2@mail.com
 ```
 ### Get all your message
 This shold be run when you have a new device and need all old message

@@ -130,3 +130,24 @@ func FriendCheck(id1 int, id2 int) (err error) {
 	}
 	return err
 }
+func FriendRemove(id1 int, id2 int) (err error) {
+	// Check DB
+	db, err := sql.Open("mysql", Direct_Backend_DB)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		return err
+	}
+	if id1 > id2 {
+		id1, id2 = id2, id1
+	}
+	rows, err := db.Query("UPDATE USER_FRIEND SET USER_FRIEND_IS_DEL=1 WHERE USER_ID_1=? AND USER_ID_2=?", id1, id2)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	return err
+}

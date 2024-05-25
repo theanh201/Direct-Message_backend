@@ -99,7 +99,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 				jsonData, err := json.Marshal(data)
 				if err != nil {
 					fmt.Println("Error marshalling JSON:", err)
-					return
+					break
 				}
 				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
 				if err != nil {
@@ -153,7 +153,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 				jsonData, err := json.Marshal(data)
 				if err != nil {
 					fmt.Println("Error marshalling JSON:", err)
-					return
+					break
 				}
 				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
 				if err != nil {

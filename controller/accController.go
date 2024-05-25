@@ -163,10 +163,12 @@ func AccGetUserByName(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]
 	if len(name) > 64 {
 		http.Error(w, "len(name) not <= 64", http.StatusBadRequest)
+		return
 	}
 	info, err := model.AccGetByName(name, page)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	// Reponse
 	json.NewEncoder(w).Encode(info)
@@ -183,10 +185,12 @@ func AccGetUserByEmail(w http.ResponseWriter, r *http.Request) {
 	email := mux.Vars(r)["email"]
 	if !validMail(email) {
 		http.Error(w, "valid email not found", http.StatusBadRequest)
+		return
 	}
 	info, err := model.AccGetByEmail(email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	// Reponse
 	json.NewEncoder(w).Encode(info)
@@ -204,6 +208,7 @@ func AccGetBackGround(w http.ResponseWriter, r *http.Request) {
 	imgId, err := strconv.Atoi(strings.Split(imgName, ".")[0])
 	if err != nil {
 		http.Error(w, "fail to extract id from image", http.StatusBadRequest)
+		return
 	}
 	if id == imgId {
 		http.ServeFile(w, r, fmt.Sprintf("./Background/%s", imgName))
