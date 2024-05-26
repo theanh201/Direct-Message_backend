@@ -14,9 +14,17 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var onlineConn = make(map[int]*websocket.Conn)
+var onlineConn = make(map[int][]*websocket.Conn)
 
 // WebSocket
+func deleteElement(slice []*websocket.Conn, remove *websocket.Conn) (result []*websocket.Conn) {
+	for _, elem := range slice {
+		if elem != remove {
+			result = append(result, elem)
+		}
+	}
+	return result
+}
 func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 	// Web socket upgrade
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -49,7 +57,8 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 		// Add to online if not online
 		switch message.Case {
 		case 0:
-			onlineConn[idFrom] = conn
+			onlineConn[idFrom] = deleteElement(onlineConn[idFrom], conn)
+			onlineConn[idFrom] = append(onlineConn[idFrom], conn)
 			conn.WriteMessage(websocket.TextMessage, []byte("You are now online"))
 			continue
 		case 1:
@@ -79,32 +88,44 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 			}
 			// Send time to sender
 			conn.WriteMessage(websocket.TextMessage, []byte(timeNow))
-			// Send to user if online
-			toConn, isOnline := onlineConn[idTo]
-			if isOnline {
-				sender, err := model.AccGetInfo(idFrom)
-				if err != nil {
-					conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
-					break
-				}
-				// Define your data
-				data := entities.Message{
-					IsEncrypt:     false,
-					IsFile:        false,
-					Content:       message.Content,
-					ReceiverEmail: message.Email,
-					SenderEmail:   sender.Email,
-					Since:         timeNow,
-				}
-				// Marshal data to JSON
-				jsonData, err := json.Marshal(data)
-				if err != nil {
-					fmt.Println("Error marshalling JSON:", err)
-					break
+			// Send to other client
+			sender, err := model.AccGetInfo(idFrom)
+			if err != nil {
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				break
+			}
+			// Define your data
+			data := entities.Message{
+				IsEncrypt:     false,
+				IsFile:        false,
+				Content:       message.Content,
+				ReceiverEmail: message.Email,
+				SenderEmail:   sender.Email,
+				Since:         timeNow,
+			}
+			// Marshal data to JSON
+			jsonData, err := json.Marshal(data)
+			if err != nil {
+				fmt.Println("Error marshalling JSON:", err)
+				break
+			}
+			for _, toConn := range onlineConn[idFrom] {
+				if conn == toConn {
+					continue
 				}
 				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
 				if err != nil {
-					conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
+					conn.WriteMessage(websocket.TextMessage, []byte("Cant dilivered to other client"))
+				}
+			}
+			// Send to user if online
+			toConns, isOnline := onlineConn[idTo]
+			if isOnline {
+				for _, toConn := range toConns {
+					err = toConn.WriteMessage(websocket.TextMessage, jsonData)
+					if err != nil {
+						conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
+					}
 				}
 			}
 		// send encrypt message
@@ -133,37 +154,51 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 				break
 			}
-			// Send to user if online
-			toConn, isOnline := onlineConn[idTo]
-			if isOnline {
-				sender, err := model.AccGetInfo(idFrom)
-				if err != nil {
-					conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
-					break
-				}
-				// Define your data
-				data := entities.Message{
-					IsEncrypt:     true,
-					IsFile:        false,
-					Content:       message.Content,
-					ReceiverEmail: message.Email,
-					SenderEmail:   sender.Email,
-					Since:         timeNow,
-				}
-				// Marshal data to JSON
-				jsonData, err := json.Marshal(data)
-				if err != nil {
-					fmt.Println("Error marshalling JSON:", err)
-					break
+			// Send time to sender
+			conn.WriteMessage(websocket.TextMessage, []byte(timeNow))
+			// Send to other client
+			sender, err := model.AccGetInfo(idFrom)
+			if err != nil {
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				break
+			}
+			// Define your data
+			data := entities.Message{
+				IsEncrypt:     false,
+				IsFile:        false,
+				Content:       message.Content,
+				ReceiverEmail: message.Email,
+				SenderEmail:   sender.Email,
+				Since:         timeNow,
+			}
+			// Marshal data to JSON
+			jsonData, err := json.Marshal(data)
+			if err != nil {
+				fmt.Println("Error marshalling JSON:", err)
+				break
+			}
+			for _, toConn := range onlineConn[idFrom] {
+				if conn == toConn {
+					continue
 				}
 				err = toConn.WriteMessage(websocket.TextMessage, jsonData)
 				if err != nil {
-					conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
+					conn.WriteMessage(websocket.TextMessage, []byte("Cant dilivered to other client"))
+				}
+			}
+			// Send to user if online
+			toConns, isOnline := onlineConn[idTo]
+			if isOnline {
+				for _, toConn := range toConns {
+					err = toConn.WriteMessage(websocket.TextMessage, jsonData)
+					if err != nil {
+						conn.WriteMessage(websocket.TextMessage, []byte("Message not dilivered"))
+					}
 				}
 			}
 		}
 	}
-	delete(onlineConn, idFrom)
+	onlineConn[idFrom] = deleteElement(onlineConn[idFrom], conn)
 }
 
 // GET
