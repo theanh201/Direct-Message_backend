@@ -10,11 +10,47 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ZEGOCLOUD/zego_server_assistant/token/go/src/token04"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
 var onlineConn = make(map[int][]*websocket.Conn)
+
+func getCallToken(id int) (token string) {
+	type RtcRoomPayLoad struct {
+		RoomId       string      `json:"room_id"`        // Room ID; used for strong verification of the room ID of the interface
+		Privilege    map[int]int `json:"privilege"`      // Permission switch list; used for strong verification of operation permissions of the interface
+		StreamIdList []string    `json:"stream_id_list"` // Stream list; used for strong verification of the stream ID of the interface; can be empty; if empty, no stream ID verification is performed
+	}
+	var appId uint32 = 2105949447
+	serverSecret := "c391b3f6184da3a7a0115c7ba7363f8f"
+	userId := fmt.Sprint(id)
+	roomId := fmt.Sprint(id)
+	var effectiveTimeInSeconds int64 = 3600
+	privilege := make(map[int]int)
+	privilege[token04.PrivilegeKeyLogin] = token04.PrivilegeEnable    // Allow room login
+	privilege[token04.PrivilegeKeyPublish] = token04.PrivilegeDisable // Do not allow streaming
+	payloadData := &RtcRoomPayLoad{
+		RoomId:       roomId,
+		Privilege:    privilege,
+		StreamIdList: nil,
+	}
+
+	payload, err := json.Marshal(payloadData)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// Generate token
+	token, err = token04.GenerateToken04(appId, userId, serverSecret, effectiveTimeInSeconds, string(payload))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(token)
+	return token
+}
 
 // WebSocket
 func deleteElement(slice []*websocket.Conn, remove *websocket.Conn) (result []*websocket.Conn) {
@@ -60,6 +96,7 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 			onlineConn[idFrom] = deleteElement(onlineConn[idFrom], conn)
 			onlineConn[idFrom] = append(onlineConn[idFrom], conn)
 			conn.WriteMessage(websocket.TextMessage, []byte("You are now online"))
+			// conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Call token: %s", getCallToken())))
 			continue
 		case 1:
 			// Get current time
@@ -196,6 +233,8 @@ func MessageFriendUnencrypt(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
+		case 3:
+			conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Call token: %s", getCallToken(idFrom))))
 		}
 	}
 	onlineConn[idFrom] = deleteElement(onlineConn[idFrom], conn)
