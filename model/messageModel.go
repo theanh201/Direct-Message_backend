@@ -60,7 +60,7 @@ func MessageGetAfterTime(id1 int, email string, time string) (messages []entitie
 		return messages, err
 	}
 	// GetAll
-	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE FROM MESSAGE WHERE ((USER_ID_TO=? AND USER_ID_FROM=?) OR (USER_ID_TO=? AND USER_ID_FROM=?)) AND MESSAGE_SINCE>?", id1, id2, id2, id1, time)
+	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE FROM MESSAGE WHERE ((USER_ID_TO=? AND USER_ID_FROM=?) OR (USER_ID_TO=? AND USER_ID_FROM=?)) AND MESSAGE_SINCE>? ORDER BY MESSAGE_SINCE", id1, id2, id2, id1, time)
 	if err != nil {
 		return messages, err
 	}
@@ -104,7 +104,7 @@ func MessageGetAll(id int) (messages []entities.Message, err error) {
 		return messages, err
 	}
 	// GetAll
-	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE FROM MESSAGE WHERE USER_ID_TO=? OR USER_ID_FROM=?", id, id)
+	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE FROM MESSAGE WHERE USER_ID_TO=? OR USER_ID_FROM=? ORDER BY MESSAGE_SINCE", id, id)
 	if err != nil {
 		return messages, err
 	}
@@ -170,7 +170,7 @@ func MessageGetAllAfterTime(id int, time string) (messages []entities.Message, e
 		return messages, err
 	}
 	// GetAllAfterTime
-	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE FROM MESSAGE WHERE (USER_ID_TO=? OR USER_ID_FROM=?) AND MESSAGE_SINCE>?", id, id, time)
+	rows, err := db.Query("SELECT USER_ID_FROM, USER_ID_TO, MESSAGE_CONTENT, MESSAGE_SINCE, MESSAGE_IS_ENCRYPT, MESSAGE_IS_FILE FROM MESSAGE WHERE (USER_ID_TO=? OR USER_ID_FROM=?) AND MESSAGE_SINCE>? ORDER BY MESSAGE_SINCE", id, id, time)
 	if err != nil {
 		return messages, err
 	}
