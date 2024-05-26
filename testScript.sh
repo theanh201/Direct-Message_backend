@@ -4,23 +4,23 @@ read options
 case $options in
     "1")
         echo "Create user1@mail.com"
-        curl -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"}' http://localhost:8080/register
+        curl -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f"}' http://localhost:8080/register
         echo "Create user2@mail.com"
-        curl -X POST -H "Content-Type: application/json" -d '{"username":"user2@mail.com", "password":"6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"}' http://localhost:8080/register
+        curl -X POST -H "Content-Type: application/json" -d '{"username":"user2@mail.com", "password":"ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f"}' http://localhost:8080/register
         echo "Create user3@mail.com"
-        curl -X POST -H "Content-Type: application/json" -d '{"username":"user3@mail.com", "password":"6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"}' http://localhost:8080/register
+        curl -X POST -H "Content-Type: application/json" -d '{"username":"user3@mail.com", "password":"ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f"}' http://localhost:8080/register
         echo "--------------------------------------------"
 
         echo "Login user1@mail.com"
-        data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"}' http://localhost:8080/login)
+        data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user1@mail.com", "password":"ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f"}' http://localhost:8080/login)
         token1=$(echo "$data" | jq -r '.token')
     
         echo "Login user2@mail.com"
-        data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user2@mail.com", "password":"6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"}' http://localhost:8080/login)
+        data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user2@mail.com", "password":"ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f"}' http://localhost:8080/login)
         token2=$(echo "$data" | jq -r '.token')
 
         echo "Login user3@mail.com"
-        data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user3@mail.com", "password":"6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"}' http://localhost:8080/login)
+        data=$(curl --no-progress-meter -X POST -H "Content-Type: application/json" -d '{"username":"user3@mail.com", "password":"ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f"}' http://localhost:8080/login)
         token3=$(echo "$data" | jq -r '.token')
         echo "--------------------------------------------"
 
@@ -78,13 +78,13 @@ case $options in
         data=$(eval "$curl_command")
         echo $data
 
-        echo "user1 accept friend request from user2"
-        curl_command="curl -X POST -F 'email=user2@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
-        eval "$curl_command"
+        # echo "user1 accept friend request from user2"
+        # curl_command="curl -X POST -F 'email=user2@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
+        # eval "$curl_command"
 
-        echo "user1 accept friend request from user3"
-        curl_command="curl -X POST -F 'email=user3@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
-        eval "$curl_command"
+        # echo "user1 accept friend request from user3"
+        # curl_command="curl -X POST -F 'email=user3@mail.com' -F 'token=${token1}' localhost:8080/accept-friend-request"
+        # eval "$curl_command"
 
         echo "user2 accept friend request from user3"
         curl_command="curl -X POST -F 'email=user3@mail.com' -F 'token=${token2}' localhost:8080/accept-friend-request"
