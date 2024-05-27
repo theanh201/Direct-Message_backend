@@ -44,6 +44,11 @@ func FriendRequestPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid opkUsed", http.StatusBadRequest)
 		return
 	}
+	err = model.FriendCheck(fromId, toId)
+	if err == nil {
+		http.Error(w, "You two are already friend", http.StatusBadRequest)
+		return
+	}
 	err = model.FriendRequestAdd(fromId, toId, ek, opkUsed)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
